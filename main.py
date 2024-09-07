@@ -9,6 +9,11 @@ from typing import Optional, Literal
 x_turn: bool = True
 current_board: Optional[tuple[int, int]] = None
 
+COLOR: dict[str, str] = {'X': "color: rgb(255, 0, 0)",
+                         'O': "color: rgb(0, 0, 255)",
+                         'focus': "background-color: rgb(127, 255, 212)",
+                         'non_focus': "background-color: rgb(60,60,60)"}
+
 PLAYER_FONT: QFont = QFont()
 PLAYER_FONT.setPointSize(30)
 
@@ -23,27 +28,15 @@ def play_turn(position: tuple[int, int], board: 'TicTacToe') -> None:
     global x_turn, current_board
     if current_board and current_board != board.position: return
 
-    if x_turn:
-        board.buttons[position[0]][position[1]].setText('X')
-        board.buttons[position[0]][position[1]].setStyleSheet("color: rgb(255, 0, 0)")
-    else:
-        board.buttons[position[0]][position[1]].setText('O')
-        board.buttons[position[0]][position[1]].setStyleSheet("color: rgb(0, 0, 255)")
+    board.buttons[position[0]][position[1]].setText('X' if x_turn else 'O')
     board.buttons[position[0]][position[1]].setDisabled(True)
-    board.buttons[position[0]][position[1]].update()
     x_turn = not x_turn
 
     if (temp := board.get_winner()):
-        if temp == 'X': board.overlay_label.setStyleSheet("color: rgb(255, 0, 0)")
-        else: board.overlay_label.setStyleSheet("color: rgb(0, 0, 255)")
-        board.overlay_label.setText(temp)
-        board.overlay_label.setHidden(False)
-        if (temp := game.get_winner()):
-            if temp == 'X': game.overlay_label.setStyleSheet("color: rgb(255, 0, 0)")
-            else: game.overlay_label.setStyleSheet("color: rgb(0, 0, 255)")
-            game.overlay_label.setText(temp)
-            game.overlay_label.setHidden(False)
-            return
+        board.show_winner(temp)
+    if (temp := game.get_winner()):
+        game.show_winner(temp)
+        return
     
     board.focus_board(False)
     if game.boards[position[0]][position[1]].overlay_label.isHidden():
@@ -95,7 +88,6 @@ class TicTacToe(QtWidgets.QWidget):
         self.overlay_label = QtWidgets.QLabel('', parent=self)
         self.overlay_label.setFont(SMALL_WINNER_FONT)
         self.overlay_label.setFixedSize(140, 140)
-        self.overlay_label.setStyleSheet("background-color: rgba(255, 255, 255, 15)")
         self.overlay_label.setHidden(True)
         self.overlay_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.overlay_label.move(10, 10)
@@ -111,30 +103,43 @@ class TicTacToe(QtWidgets.QWidget):
                 button.setText('')
                 button.setEnabled(True)
 
-    def get_winner(self) -> Literal['X', 'O', '']:
+    def get_winner(self) -> Literal['X', 'O', 'Tie', '']:
+        empty_square: bool = False
         main_diag = []
         sub_diag = []
         for i in range(3):
-            row = []
-            col = []
+            row, col = '', ''
             for j in range(3):
-                row.append(self.buttons[i][j].text())
-                col.append(self.buttons[j][i].text())
+                row += self.buttons[i][j].text()
+                col += self.buttons[j][i].text()
             main_diag.append(self.buttons[i][i].text())
             sub_diag.append(self.buttons[2 - i][i].text())
-            if (len(set(row)) == 1) and row[0]: return row[0]
-            if (len(set(col)) == 1) and col[0]: return col[0]
+            if (len(set(row)) == 1) and (len(row) == 3): return row[0]
+            if (len(set(col)) == 1) and (len(col) == 3): return col[0]
+            if len(row) != 3 or len(col) != 3: empty_square = True
         
         if len(set(main_diag)) == 1: return main_diag[0]
         if len(set(sub_diag)) == 1: return sub_diag[0]
 
-        return ''
+        return '' if empty_square else 'Tie'
+
+    def show_winner(self, winner: Literal['X', 'O', 'Tie']) -> None:
+        color = "background-color: rgba(255, 255, 255, 15)"
+        if winner == 'X': color += f"; {COLOR['X']}"
+        elif winner == 'O': color += f"; {COLOR['O']}"
+        else: winner = ''
+        self.overlay_label.setStyleSheet(color)
+        self.overlay_label.setText(winner)
+        self.overlay_label.setHidden(False)
 
     def focus_board(self, focus: bool = True) -> None:
         for row in self.buttons:
             for button in row:
-                if focus: button.setStyleSheet("background-color: rgb(127, 255, 212)")
-                else: button.setStyleSheet("background-color: rgb(60,60,60)")
+                if focus: color = COLOR['focus']
+                else: color = COLOR['non_focus']
+                if button.text() == 'X': color += f"; {COLOR['X']}"
+                else: color += f"; {COLOR['O']}"
+                button.setStyleSheet(color)
 
 class UltimateTicTacToe(QtWidgets.QWidget):
     def __init__(self):
@@ -163,30 +168,38 @@ class UltimateTicTacToe(QtWidgets.QWidget):
         self.overlay_label = QtWidgets.QLabel('', self)
         self.overlay_label.setFont(WINNER_FONT)
         self.overlay_label.setFixedSize(450, 450)
-        self.overlay_label.setStyleSheet("background-color: rgba(255, 255, 255, 15)")
         self.overlay_label.setHidden(True)
         self.overlay_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.overlay_label.move(20, 20)
 
+    def show_winner(self, winner: Literal['X', 'O', 'Tie']) -> None:
+        color = "background-color: rgba(255, 255, 255, 50)"
+        if winner == 'X': color += f"; {COLOR['X']}"
+        elif winner == 'O': color += f"; {COLOR['O']}"
+        else: winner = ''
+        self.overlay_label.setStyleSheet(color)
+        self.overlay_label.setText(winner)
+        self.overlay_label.setHidden(False)
 
-    def get_winner(self) -> Literal['X', 'O', '']:
+    def get_winner(self) -> Literal['X', 'O', 'Tie', '']:
+        empty_square: bool = False
         main_diag = []
         sub_diag = []
         for i in range(3):
-            row = []
-            col = []
+            row, col = '', ''
             for j in range(3):
-                row.append(self.boards[i][j].overlay_label.text())
-                col.append(self.boards[j][i].overlay_label.text())
+                row += self.boards[i][j].overlay_label.text()
+                col += self.boards[j][i].overlay_label.text()
             main_diag.append(self.boards[i][i].overlay_label.text())
             sub_diag.append(self.boards[2 - i][i].overlay_label.text())
-            if (len(set(row)) == 1) and row[0]: return row[0]
-            if (len(set(col)) == 1) and col[0]: return col[0]
+            if (len(set(row)) == 1) and (len(row) == 3): return row[0]
+            if (len(set(col)) == 1) and (len(col) == 3): return col[0]
+            if len(row) != 3 or len(col) != 3: empty_square = True
         
         if len(set(main_diag)) == 1: return main_diag[0]
         if len(set(sub_diag)) == 1: return sub_diag[0]
 
-        return ''
+        return '' if empty_square else 'Tie'
 
 
 class Rules(QtWidgets.QWidget):
@@ -251,6 +264,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabs = Tabs()
         self.tabs.setCurrentIndex(1)
         self.setCentralWidget(self.tabs)
+
+
 
 def main():
     ult_tictactoe = QtWidgets.QApplication([])
