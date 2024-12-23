@@ -8,6 +8,7 @@ from typing import Optional, Literal
 
 x_turn: bool = True
 current_board: Optional[tuple[int, int]] = None
+prev_state: Optional[tuple[tuple[int, int], 'TicTacToe']] = None
 
 COLOR: dict[str, str] = {'X': "color: rgb(255, 0, 0)",
                          'O': "color: rgb(0, 0, 255)",
@@ -25,7 +26,7 @@ WINNER_FONT.setPointSize(300)
 
 
 def play_turn(position: tuple[int, int], board: 'TicTacToe') -> None:
-    global x_turn, current_board
+    global x_turn, current_board, prev_state
     if current_board and current_board != board.position: return
 
     board.buttons[position[0]][position[1]].setText('X' if x_turn else 'O')
@@ -38,6 +39,7 @@ def play_turn(position: tuple[int, int], board: 'TicTacToe') -> None:
         game.show_winner(temp)
         return
     
+    prev_state = (position, board, game.boards[position[0]][position[1]])
     board.focus_board(False)
     if game.boards[position[0]][position[1]].overlay_label.isHidden():
         game.boards[position[0]][position[1]].focus_board()
@@ -103,7 +105,7 @@ class TicTacToe(QtWidgets.QWidget):
                 button.setText('')
                 button.setEnabled(True)
 
-    def get_winner(self) -> Literal['X', 'O', 'Tie', '']:
+    def get_winner(self) -> Literal['X', 'O', 'T', '']:
         empty_square: bool = False
         main_diag = []
         sub_diag = []
@@ -114,23 +116,25 @@ class TicTacToe(QtWidgets.QWidget):
                 col += self.buttons[j][i].text()
             main_diag.append(self.buttons[i][i].text())
             sub_diag.append(self.buttons[2 - i][i].text())
-            if (len(set(row)) == 1) and (len(row) == 3): return row[0]
-            if (len(set(col)) == 1) and (len(col) == 3): return col[0]
-            if len(row) != 3 or len(col) != 3: empty_square = True
+            if (len(row) == 3) and (len(set(row)) == 1): return row[0]
+            if (len(col) == 3) and (len(set(col)) == 1): return col[0]
+            if (len(row) != 3) or (len(col) != 3): empty_square = True
         
         if len(set(main_diag)) == 1: return main_diag[0]
         if len(set(sub_diag)) == 1: return sub_diag[0]
 
-        return '' if empty_square else 'Tie'
+        return '' if empty_square else 'T'
 
-    def show_winner(self, winner: Literal['X', 'O', 'Tie']) -> None:
+    def show_winner(self, winner: Literal['X', 'O', 'T']) -> None:
         color = "background-color: rgba(255, 255, 255, 15)"
         if winner == 'X': color += f"; {COLOR['X']}"
         elif winner == 'O': color += f"; {COLOR['O']}"
-        else: winner = ''
         self.overlay_label.setStyleSheet(color)
         self.overlay_label.setText(winner)
         self.overlay_label.setHidden(False)
+
+    def reset_winner(self) -> None:
+        self.overlay_label.setHidden(True)
 
     def focus_board(self, focus: bool = True) -> None:
         for row in self.buttons:
@@ -172,16 +176,15 @@ class UltimateTicTacToe(QtWidgets.QWidget):
         self.overlay_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.overlay_label.move(20, 20)
 
-    def show_winner(self, winner: Literal['X', 'O', 'Tie']) -> None:
+    def show_winner(self, winner: Literal['X', 'O', 'T']) -> None:
         color = "background-color: rgba(255, 255, 255, 50)"
         if winner == 'X': color += f"; {COLOR['X']}"
         elif winner == 'O': color += f"; {COLOR['O']}"
-        else: winner = ''
         self.overlay_label.setStyleSheet(color)
         self.overlay_label.setText(winner)
         self.overlay_label.setHidden(False)
 
-    def get_winner(self) -> Literal['X', 'O', 'Tie', '']:
+    def get_winner(self) -> Literal['X', 'O', 'T', '']:
         empty_square: bool = False
         main_diag = []
         sub_diag = []
@@ -199,7 +202,7 @@ class UltimateTicTacToe(QtWidgets.QWidget):
         if len(set(main_diag)) == 1: return main_diag[0]
         if len(set(sub_diag)) == 1: return sub_diag[0]
 
-        return '' if empty_square else 'Tie'
+        return '' if empty_square else 'T'
 
 
 class Rules(QtWidgets.QWidget):
@@ -232,6 +235,12 @@ class Home(QtWidgets.QWidget):
         self.reset_button = QtWidgets.QPushButton('New Game', parent=self)
         self.reset_button.setFixedSize(80, 30)
         self.reset_button.clicked.connect(self.restart)
+
+        self.undo_button = QtWidgets.QPushButton('Undo')
+        self.undo_button.setFixedSize(50, 30)
+        self.undo_button.clicked.connect(self.undo_move)
+
+        self.hbox.addWidget(self.undo_button)
         self.hbox.addWidget(self.reset_button)
 
     def restart(self):
@@ -247,6 +256,18 @@ class Home(QtWidgets.QWidget):
         for row in game.boards:
             for board in row:
                 board.reset()
+
+    def undo_move(self):
+        global x_turn, current_board
+        # if won no undo cuz thats life
+        prev_state[2].focus_board(False)
+        if prev_state[1].get_winner(): prev_state[1].reset_winner()
+        prev_state[1].focus_board()
+        prev_state[1].buttons[prev_state[0][0]][prev_state[0][1]].setText('')
+        prev_state[1].buttons[prev_state[0][0]][prev_state[0][1]].setDisabled(False)
+
+        current_board = prev_state[1].position
+        x_turn = not x_turn
 
 
 class Tabs(QtWidgets.QTabWidget):
