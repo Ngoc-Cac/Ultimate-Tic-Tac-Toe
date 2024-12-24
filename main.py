@@ -5,8 +5,9 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 import PyQt6.QtWidgets as QtWidgets
 
-from tictactoe import TicTacToe, UltimateTicTacToe
-from minimax import find_move, EMPTY_CHAR
+from GUI.tictactoe_board import TicTacToe, UltimateTicTacToe
+from minimax.minimax import find_move
+from minimax.gamestate import EMPTY_CHAR
 
 from typing import Optional, Literal
 ### X ALWAYS GOES FIRST!!!
@@ -15,8 +16,8 @@ from typing import Optional, Literal
 x_turn: bool = True
 current_board: Optional[tuple[int, int]] = None
 # previous state contains: previous position played, the previous board
-# that was played on, the next board to play
-prev_states: list[tuple[tuple[int, int], 'TicTacToe', 'TicTacToe']] = []
+# that was played on
+prev_states: list[tuple[tuple[int, int], 'TicTacToe']] = []
 
 bot_goes_first: bool = True
 game_ongoing: bool = False
