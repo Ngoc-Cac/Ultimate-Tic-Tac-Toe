@@ -7,6 +7,7 @@ from typing import Literal, Callable
 
 COLOR: dict[str, str] = {'X': "color: rgb(255, 0, 0)",
                          'O': "color: rgb(0, 0, 255)",
+                         'T': "color: rgb(255, 255, 255)",
                          'focus': "background-color: rgb(127, 255, 212)",
                          'non_focus': "background-color: rgb(60,60,60)"}
 
@@ -103,7 +104,7 @@ class TicTacToe(QtWidgets.QWidget):
 
     def show_winner(self, winner: Literal['X', 'O', 'T']) -> None:
         color = "background-color: rgba(255, 255, 255, 15)"
-        color += "; " + (COLOR['X'] if winner == 'X' else COLOR['O'])
+        color += "; " + COLOR[winner]
         self.overlay_label.setText(winner)
         self.overlay_label.setStyleSheet(color)
         self.overlay_label.setHidden(False)
@@ -114,8 +115,9 @@ class TicTacToe(QtWidgets.QWidget):
     def focus_board(self, focus: bool = True) -> None:
         for row in self.buttons:
             for button in row:
+                char = button.text()
                 color = COLOR['focus' if focus else 'non_focus']
-                color += "; " + (COLOR['X'] if button.text() == 'X' else COLOR['O'])
+                color += "; " + COLOR[char if char else 'T']
                 button.setStyleSheet(color)
 
     def get_state(self) -> list[list[Literal['X', 'O', '']]]:
@@ -155,7 +157,7 @@ class UltimateTicTacToe(QtWidgets.QWidget):
 
     def show_winner(self, winner: Literal['X', 'O', 'T']) -> None:
         color = "background-color: rgba(255, 255, 255, 50)"
-        color += "; " + (COLOR['X'] if winner == 'X' else COLOR['O'])
+        color += "; " + COLOR[winner]
         self.overlay_label.setText(winner)
         self.overlay_label.setStyleSheet(color)
         self.overlay_label.setHidden(False)

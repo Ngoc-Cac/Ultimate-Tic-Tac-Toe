@@ -1,12 +1,11 @@
 import random as rand
 from functools import wraps
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont
 import PyQt6.QtWidgets as QtWidgets
 
 from GUI.tictactoe_board import TicTacToe, UltimateTicTacToe
-
 from GUI.menus import NewGameMenu, InGameMenu
 from minimax.minimax import find_move
 from minimax.gamestate import EMPTY_CHAR
@@ -39,15 +38,8 @@ def undo_decor(func):
         if gamemode == 'Bot': func()
     return undo_inner
 
-def restart():
-    global current_board, x_turn, bot_goes_first
-    prev_states.clear()
-    x_turn = True
-
-    if gamemode == 'Bot':
-        winner = game.boards[1][1].get_winner() if gametype == 'Normal' else game.get_winner()
-        if winner in 'OT': bot_goes_first = not bot_goes_first
-
+def board_cleanup():
+    global current_board
     game.overlay_label.setHidden(True)
 
     if current_board:
@@ -58,6 +50,17 @@ def restart():
         for j, board in enumerate(row):
             if (i == j == 1) or (gametype != 'Normal'):
                 board.reset()
+
+def restart():
+    global x_turn, bot_goes_first
+    prev_states.clear()
+    x_turn = True
+
+    if gamemode == 'Bot':
+        winner = game.boards[1][1].get_winner() if gametype == 'Normal' else game.get_winner()
+        if winner in 'OT': bot_goes_first = not bot_goes_first
+
+    board_cleanup()
 
     if (gamemode == 'Bot') and bot_goes_first: bot_move()
 
@@ -144,11 +147,13 @@ class Home(QtWidgets.QWidget):
 
     def init_menus(self):
         bg_color = "background-color: rgba(0, 0, 0, 170)"
-        self.overlay_menu = {}
+        self.overlay_menu: dict[Literal['new', 'in-game'], QtWidgets.QFrame] = {}
         self.overlay_menu['new'] = NewGameMenu(self.start_game, self.change_gametype,
                                                self.change_gamemode, self.change_turn,
                                                self)
-        self.overlay_menu['in-game'] = InGameMenu()
+        self.overlay_menu['in-game'] = InGameMenu(lambda: self.start_game(False),
+                                                  lambda: self.start_game(True),
+                                                  self)
         self.overlay_menu['in-game'].setHidden(True)
 
         self.overlay_menu['new'].setStyleSheet(bg_color)
@@ -161,6 +166,14 @@ class Home(QtWidgets.QWidget):
         global game
         game = UltimateTicTacToe(play_turn)
 
+
+        hamburger_butt = QtWidgets.QPushButton(self)
+        hamburger_butt.clicked.connect(self.ingame_menu_popup)
+        hamburger_butt.setFixedSize(50, 50)
+        ico = hamburger_butt.style()\
+                            .standardIcon(QtWidgets.QStyle.StandardPixmap.SP_FileDialogDetailedView)
+        hamburger_butt.setIcon(ico)
+        hamburger_butt.setIconSize(QSize(50, 50))
 
         reset_button = QtWidgets.QPushButton('New Game')
         reset_button.setFixedSize(80, 30)
@@ -188,6 +201,7 @@ class Home(QtWidgets.QWidget):
         global gamemode
         gamemode = text
         self.overlay_menu['new'].choose_turn_butt.setHidden(text == 'Human')
+    
     def change_gametype(self, text: Literal['Normal', 'Ultimate']):
         global gametype
         gametype = text
@@ -203,33 +217,49 @@ class Home(QtWidgets.QWidget):
         subject = 'Bot' if bot_goes_first else 'Human'
         self.overlay_menu['new'].choose_turn_butt.setText(subject + ' goes first!')
 
+    def ingame_menu_popup(self):
+        self.overlay_menu['in-game'].setHidden(False)
+
 
     def start_game(self, new_game: bool):
-        global game_ongoing
+        global game_ongoing, x_turn, bot_goes_first
         # make new game but no ongoing game
         if new_game and not game_ongoing:
             game_ongoing = True
             self.overlay_menu['new'].setHidden(True)
+            if (gamemode == 'Bot') and bot_goes_first:
+                bot_move()
         # make new game but there is ongoing game
         elif new_game and game_ongoing:
             game_ongoing = False
-            pass
+            x_turn = True
+            bot_goes_first = self.overlay_menu['new'].choose_turn_butt.text() == 'Bot goes first!'
+            board_cleanup()
+            self.overlay_menu['new'].setHidden(False)
         # continue ongoing game
         else:
             game_ongoing = True
-            pass
 
-        if (gamemode == 'Bot') and bot_goes_first: bot_move()
+        self.overlay_menu['in-game'].setHidden(True)
 
 
 class Tabs(QtWidgets.QTabWidget):
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
 
+        self.home_tab = Home()
+
         self.addTab(Rules(), 'Rules and Info')
-        self.addTab(Home(), 'Play')
+        self.addTab(self.home_tab, 'Play')
         # add settings tab?
         # self.addTab(Settings(), 'Settings')
+
+        self.setCurrentIndex(1)
+        self.currentChanged.connect(self.change_tab_process)
+
+    def change_tab_process(self, cur_index: int):
+        if (cur_index == 1) and self.home_tab.overlay_menu['new'].isHidden():
+            self.home_tab.overlay_menu['in-game'].setHidden(False)
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self) -> None:
@@ -237,10 +267,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("Ultimate Tic-Tac-Toe")
         self.setGeometry(350, 100, *SCREEN_SIZE)
         self.setFixedSize(*SCREEN_SIZE)
-
-        self.tabs = Tabs()
-        self.tabs.setCurrentIndex(1)
-        self.setCentralWidget(self.tabs)
+        self.setCentralWidget(Tabs())
 
 
 
