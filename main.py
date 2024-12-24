@@ -30,15 +30,18 @@ def restart():
 def undo_move():
     if (not len(prev_states)) or game.get_winner(): return
     global x_turn, current_board
-
+    
     prev_state = prev_states.pop()
-    prev_state[2].focus_board(False)
+    game.boards[prev_state[0][0]][prev_state[0][1]].focus_board(False)
+    
     if prev_state[1].get_winner(): prev_state[1].reset_winner()
-    prev_state[1].focus_board()
     prev_state[1].buttons[prev_state[0][0]][prev_state[0][1]].setText('')
     prev_state[1].buttons[prev_state[0][0]][prev_state[0][1]].setDisabled(False)
 
-    current_board = prev_state[1].position
+    if len(prev_states):
+        prev_state[1].focus_board()
+        current_board = prev_state[1].position
+    else: current_board = None
     x_turn = not x_turn
 
 def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
@@ -56,7 +59,7 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
         game.show_winner(temp)
         return
     
-    prev_states.append((position, board, game.boards[position[0]][position[1]]))
+    prev_states.append((position, board))
     if game.boards[position[0]][position[1]].overlay_label.isHidden():
         game.boards[position[0]][position[1]].focus_board()
         current_board = position
