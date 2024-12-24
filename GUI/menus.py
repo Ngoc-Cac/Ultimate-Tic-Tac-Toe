@@ -90,5 +90,25 @@ class NewGameMenu(QtWidgets.QFrame):
         return mode_hbox
     
 class InGameMenu(QtWidgets.QFrame):
-    def __init__(self, parent = None):
+    def __init__(self, continue_game_func: Callable[[], None],
+                 new_game_func: Callable[[], None],
+                 parent = None):
         super().__init__(parent)
+
+        continue_butt = QtWidgets.QPushButton('Continue Game')
+        continue_butt.clicked.connect(continue_game_func)
+        continue_butt.setFont(INFO_FONT)
+        continue_butt.setFixedSize(180, 50)
+        continue_butt.setStyleSheet(TRANSPARENT_BG)
+
+        new_game_butt = QtWidgets.QPushButton('New Game')
+        new_game_butt.clicked.connect(new_game_func)
+        new_game_butt.setFont(INFO_FONT)
+        new_game_butt.setFixedSize(180, 50)
+        new_game_butt.setStyleSheet(TRANSPARENT_BG)
+
+        vbox = QtWidgets.QVBoxLayout()
+        vbox.addWidget(continue_butt)
+        vbox.addWidget(new_game_butt)
+        vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setLayout(vbox)
