@@ -6,6 +6,7 @@ from PyQt6.QtGui import QFont
 import PyQt6.QtWidgets as QtWidgets
 
 from GUI.tictactoe_board import TicTacToe, UltimateTicTacToe
+
 from GUI.menus import NewGameMenu, InGameMenu
 from minimax.minimax import find_move
 from minimax.gamestate import EMPTY_CHAR
