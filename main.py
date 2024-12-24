@@ -1,3 +1,4 @@
+import random as rand
 from functools import wraps
 
 from PyQt6.QtCore import Qt
@@ -101,13 +102,29 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
        ): bot_move()
 
 def bot_move():
-    board = [[cell if cell else EMPTY_CHAR for cell in row]
-             for row in game.boards[1][1].get_state()]
-    temp = find_move(board, 'X' if x_turn else 'O')
+    if gametype == 'Normal':
+        board = [[cell if cell else EMPTY_CHAR for cell in row]
+                for row in game.boards[1][1].get_state()]
+        temp = find_move(board, 'X' if x_turn else 'O')
 
-    if temp is None: return
-    row, col = temp.previous_move
-    game.boards[1][1].buttons[row][col].click()
+        if temp is None: return
+        row, col = temp.previous_move
+        button_to_click = game.boards[1][1].buttons[row][col]
+    else:
+        empty_cells = []
+        if current_board:
+            board_to_click = game.boards[current_board[0]][current_board[1]]
+        else:
+            board_to_click = rand.choice([board for row in game.boards for board in row
+                                          if board.overlay_label.isHidden()])
+        for row in board_to_click.buttons:
+            for button in row:
+                if not button.text():
+                    empty_cells.append(button)
+        button_to_click = rand.choice(empty_cells)
+
+    button_to_click.click()
+
 
 
 class Rules(QtWidgets.QWidget):
