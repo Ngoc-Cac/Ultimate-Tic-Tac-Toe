@@ -3,7 +3,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 import PyQt6.QtWidgets as QtWidgets
 
-from tictactoe import TicTacToe, UltimateTicTacToe
+from GUI.tictactoe_board import TicTacToe, UltimateTicTacToe
 
 from typing import Optional, Literal
 
