@@ -29,13 +29,13 @@ INFO_FONT: QFont = QFont()
 INFO_FONT.setPointSize(16)
 
 
-def undo_decor(func):
-    @wraps(func)
+def undo_decor(undo_func):
+    @wraps(undo_func)
     def undo_inner(*args, **kwargs):
         var_to_use = game if gametype == 'Ultimate' else game.boards[1][1]
         if (not len(prev_states)) or var_to_use.get_winner(): return
-        func()
-        if gamemode == 'Bot': func()
+        undo_func()
+        if gamemode == 'Bot': undo_func()
     return undo_inner
 
 def board_cleanup():
@@ -175,12 +175,12 @@ class Home(QtWidgets.QWidget):
         hamburger_butt.setIcon(ico)
         hamburger_butt.setIconSize(QSize(50, 50))
 
-        reset_button = QtWidgets.QPushButton('New Game')
-        reset_button.setFixedSize(80, 30)
+        reset_button = QtWidgets.QPushButton('Restart')
+        reset_button.setFixedSize(70, 30)
         reset_button.clicked.connect(restart)
 
         undo_button = QtWidgets.QPushButton('Undo')
-        undo_button.setFixedSize(50, 30)
+        undo_button.setFixedSize(60, 30)
         undo_button.clicked.connect(undo_move)
 
 
