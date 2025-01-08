@@ -5,6 +5,7 @@ from typing import TypeAlias, Union, Literal, Optional
 
 PlayerCharacter: TypeAlias = Literal['X', 'O']
 TicTacToeBoard: TypeAlias = list[list[PlayerCharacter | Literal[' ']]]
+UltimateTicTacToeBoard: TypeAlias = list[list[PlayerCharacter | Literal[' ', 'T']]]
 
 NumericType: TypeAlias = Union[int, float]
 
@@ -12,7 +13,7 @@ NumericType: TypeAlias = Union[int, float]
 EMPTY_CHAR: str = ' '
 MAX_SCORE: int = 1000
 TIE_SCORE: int = 1000
-def get_winner(board: TicTacToeBoard) -> Optional[PlayerCharacter]:
+def get_winner(board: TicTacToeBoard | UltimateTicTacToeBoard) -> Optional[PlayerCharacter]:
     main_diag = []
     sub_diag = []
     for i, row in enumerate(board):
@@ -92,3 +93,63 @@ class GameState():
 
     def __str__(self) -> str:
         return '\n'.join('|'.join(row) for row in self._board_state)
+    
+
+class UltimateGameState(GameState):
+    __slots__ = '_subboards'
+    def __init__(self, main_board_state: UltimateTicTacToeBoard,
+                 subboard_states: list[list[TicTacToeBoard]],
+                 player_char: PlayerCharacter,
+                 max_player: PlayerCharacter, *,
+                 free_cells: Optional[set[tuple[int, int, int, int]]] = None,
+                 previous_move: Optional[tuple[int, int, int, int]] = None):
+        self._subboards = subboard_states
+
+        if free_cells is None:
+            free_cells = set()
+            for i, row in enumerate(self._subboards):
+                for j, board in enumerate(row):
+                    if main_board_state[i][j] != EMPTY_CHAR: continue
+                    free_cells.update((i, j , k, l)
+                                      for k, subrow in enumerate(board)
+                                      for l, cell in enumerate(subrow)
+                                      if cell == EMPTY_CHAR)
+
+        super().__init__(main_board_state, player_char, max_player,
+                         free_cells=free_cells, previous_move=previous_move)
+
+    def expand_state(self) -> list['UltimateGameState']:
+        new_states: list[UltimateGameState] = []
+        for pos in self._free_cells:
+            next_board = deepcopy(self._board_state)
+            next_subboards = deepcopy(self._subboards)
+            next_play_char = 'X' if self._play_char != 'X' else 'O'
+
+            next_subboards[pos[0]][pos[1]][pos[2]][pos[3]] = self._play_char
+            if (winner := get_winner(next_subboards[pos[0]][pos[1]])):
+                next_board[pos[0]][pos[1]] = winner
+            elif winner is None:
+                if not sum(row.count(EMPTY_CHAR) for row in next_subboards[pos[0]][pos[1]]):
+                    next_board[pos[0]][pos[1]] = 'T'
+
+            if next_board[pos[2]][pos[3]] == EMPTY_CHAR:
+                next_free_cells = set((pos[2], pos[3], i, j)
+                                      for i, row in enumerate(next_subboards[pos[2]][pos[3]])
+                                      for j, cell in enumerate(row)
+                                      if cell == EMPTY_CHAR)
+            else:
+                next_free_cells = set()
+                for i, row in enumerate(next_subboards):
+                    for j, board in enumerate(row):
+                        if next_board[i][j] != EMPTY_CHAR: continue
+                        next_free_cells.update((i, j , k, l)
+                                               for k, subrow in enumerate(board)
+                                               for l, cell in enumerate(subrow)
+                                               if cell == EMPTY_CHAR)
+
+
+            new_states.append(UltimateGameState(next_board, next_subboards,
+                                                next_play_char, self._max_player,
+                                                free_cells=next_free_cells,
+                                                previous_move=pos))
+        return new_states
