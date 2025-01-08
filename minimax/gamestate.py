@@ -93,6 +93,10 @@ class GameState():
         else:
             return TIE_SCORE if len(self._free_cells) == 0 else None
         
+    def heuristic_score(self, depth: int) -> NumericType:
+        """Placeholder method for compatibility with minimax algorithm"""
+        return -depth + 0 if (h_score := self.calculate_score()) is None else h_score
+        
 
     def __str__(self) -> str:
         return '\n'.join('|'.join(row) for row in self._board_state)
@@ -155,5 +159,5 @@ class UltimateGameState(GameState):
                                                 previous_move=pos))
         return new_states
     
-    def heuristic_score(self) -> NumericType:
-        pass
+    def heuristic_score(self, depth: int) -> NumericType:
+        return 0
