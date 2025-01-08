@@ -7,7 +7,7 @@ import PyQt6.QtWidgets as QtWidgets
 
 from GUI.tictactoe_board import TicTacToe, UltimateTicTacToe
 from GUI.menus import NewGameMenu, InGameMenu
-from minimax.minimax import find_move
+from minimax.minimax import find_move_normal
 from minimax.gamestate import EMPTY_CHAR
 
 from typing import Optional, Literal
@@ -111,7 +111,7 @@ def bot_move():
     if gametype == 'Normal':
         board = [[cell if cell else EMPTY_CHAR for cell in row]
                 for row in game.boards[1][1].get_state()]
-        temp = find_move(board, 'X' if x_turn else 'O')
+        temp = find_move_normal(board, 'X' if x_turn else 'O')
 
         if temp is None: return
         row, col = temp.previous_move

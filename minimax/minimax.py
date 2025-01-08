@@ -7,11 +7,18 @@ from typing import Optional
 from minimax.gamestate import TicTacToeBoard, PlayerCharacter
 
 def minimax(game_state: GameState, maximizing: bool = True, *,
-            alpha = -inf, beta = inf, depth: int = 0)\
+            max_depth: Optional[int] = None, **kwargs)\
             -> tuple[int, tuple[int, int]]:
+    depth = kwargs['depth'] if 'depth' in kwargs else 0
+    
     score = game_state.calculate_score()
     if not (score is None):
         return score - depth
+    elif not (max_depth is None) and depth == max_depth:
+        return 0
+
+    alpha = kwargs['alpha'] if 'alpha' in kwargs else -inf
+    beta = kwargs['beta'] if 'beta' in kwargs else inf
 
     if maximizing:
         score, optimise_func = -inf, max
@@ -51,7 +58,7 @@ def minimax(game_state: GameState, maximizing: bool = True, *,
 #         score = optimise_func(score, recur)
 #     return score
 
-def find_move(board: TicTacToeBoard, turn: PlayerCharacter)\
+def find_move_normal(board: TicTacToeBoard, turn: PlayerCharacter)\
     -> Optional[GameState]:
     state = GameState(board, turn, turn)
     best_score = -inf
