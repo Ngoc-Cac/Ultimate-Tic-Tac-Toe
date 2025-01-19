@@ -83,9 +83,7 @@ def find_move_ultimate(main_board: UltimateTicTacToeBoard,
                               board_to_play=board_to_play)
     best_score = -inf
     best_state = None
-    debug_i = 0
     for new_state in state.expand_state():
-        print(f"{(debug_i := debug_i + 1)} states explored.")
         score = minimax(new_state, False, max_depth=max_depth)
         if best_score < score:
             best_state = new_state

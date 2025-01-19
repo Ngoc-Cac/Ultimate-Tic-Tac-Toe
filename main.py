@@ -1,12 +1,13 @@
 import random as rand
 from functools import wraps
 
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QThreadPool
 from PyQt6.QtGui import QFont
 import PyQt6.QtWidgets as QtWidgets
 
 from GUI.tictactoe_board import TicTacToe, UltimateTicTacToe
 from GUI.menus import NewGameMenu, InGameMenu
+from GUI.bot_process import BotProcess
 from minimax.minimax import find_move_normal, find_move_ultimate
 
 from typing import Optional, Literal
@@ -104,43 +105,19 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
     if (gamemode == 'Bot') and (
             (bot_goes_first and x_turn) or\
             (not bot_goes_first and not x_turn)
-       ): bot_move()
+       ):
+        bot_move()
 
 def bot_move():
-    if gametype == 'Normal':
-        board = game.boards[1][1].get_state()
-        temp = find_move_normal(board, 'X' if x_turn else 'O')
+    game.block_clicks(True)
+    def make_move(button_to_click: QtWidgets.QPushButton | None):
+        game.block_clicks(False)
+        if button_to_click: button_to_click.click()
 
-        if temp is None: return
-        row, col = temp.previous_move
-        button_to_click = game.boards[1][1].buttons[row][col]
-    else:
-        # empty_cells = []
-        # if current_board:
-        #     board_to_click = game.boards[current_board[0]][current_board[1]]
-        # else:
-        #     board_to_click = rand.choice([board for row in game.boards for board in row
-        #                                   if board.overlay_label.isHidden()])
-        # for row in board_to_click.buttons:
-        #     for button in row:
-        #         if not button.text():
-        #             empty_cells.append(button)
-        # button_to_click = rand.choice(empty_cells)
-
-        subboards = []
-        for row in game.boards:
-            subboards.append([board.get_state() for board in row])
-        temp = find_move_ultimate(game.get_state(), subboards,
-                                  turn= 'X' if x_turn else 'O',
-                                  board_to_play=current_board,
-                                  max_depth=4)
-        
-        if temp is None: return
-        b2p_row, b2p_col, row, col = temp.previous_move
-        button_to_click = game.boards[b2p_row][b2p_col].buttons[row][col]
-
-    button_to_click.click()
-
+    task = BotProcess(gametype, game, x_turn, current_board)
+    task.signals.output.connect(make_move)
+    threadpool.start(task)
+    
 
 
 class Rules(QtWidgets.QWidget):
@@ -287,4 +264,5 @@ if __name__=="__main__":
     ult_tictactoe = QtWidgets.QApplication([])
     root = MainWindow()
     root.show()
+    threadpool = QThreadPool()
     ult_tictactoe.exec()

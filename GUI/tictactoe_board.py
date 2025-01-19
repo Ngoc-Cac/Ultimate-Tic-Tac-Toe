@@ -165,6 +165,10 @@ class UltimateTicTacToe(QtWidgets.QWidget):
         self.overlay_label.setStyleSheet(color)
         self.overlay_label.setHidden(False)
 
+    def block_clicks(self, block: bool) -> None:
+        self.overlay_label.setStyleSheet(f"background-color: rgba(255, 255, 255, {0 if block else 50})")
+        self.overlay_label.setHidden(not block)
+
     def get_winner(self) -> Literal['X', 'O', 'T', '']:
         empty_square: bool = False
         main_diag = []
