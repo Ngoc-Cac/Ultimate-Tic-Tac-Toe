@@ -12,7 +12,7 @@ NumericType: TypeAlias = Union[int, float]
 
 EMPTY_CHAR: str = ' '
 MAX_SCORE: int = 1000
-TIE_SCORE: int = 1000
+TIE_SCORE: int = 0
 def get_winner(board: TicTacToeBoard | UltimateTicTacToeBoard) -> Optional[PlayerCharacter]:
     main_diag = []
     sub_diag = []
@@ -160,4 +160,31 @@ class UltimateGameState(GameState):
         return new_states
     
     def heuristic_score(self, depth: int) -> NumericType:
-        return 0
+        # 1. Small board wins add 5 points
+        # 2. Winning the center board adds 10
+        # 3. Winning a corner board adds 3
+        # 4. Getting a center square in any small board is worth 3
+        # 5. Getting a square in the center board is worth 3.
+        # Two board wins which can be continued for a winning sequence
+        #   (i.e. they are in a row, column or diagonal without an interfering win
+        #   for the other player in the third board of the sequence) are worth 4 points
+        # And a similar sequence inside a small board is worth 2 points.
+        # A symmetric negative score is given if the other player has these features
+        heurstic = self._board_state.count(self._play_char) * 5
+        # heuristic 5
+        heurstic += self._subboards[1][1].count(self._play_char) * 3
+        if self.previous_move:
+            if (self.previous_move[0] == 1) and (self.previous_move[1] == 1) and\
+               (self._board_state[1][1] == self._play_char):
+                heurstic += 10
+            if ((self.previous_move[0] == 0) and (self.previous_move[1] == 0) or\
+                (self.previous_move[0] == 0) and (self.previous_move[1] == 2) or\
+                (self.previous_move[0] == 2) and (self.previous_move[1] == 0) or\
+                (self.previous_move[0] == 2) and (self.previous_move[1] == 2)) and\
+               (self._board_state[self.previous_move[0]][self.previous_move[1]] == self._play_char):
+                heurstic += 3
+
+        for i, row in enumerate(self._subboards):
+            for j, board in enumerate(row):
+                if board[1][1] == self._play_char: heurstic += 3
+        return heurstic * (1 if self._play_char == self._max_player else -1)
