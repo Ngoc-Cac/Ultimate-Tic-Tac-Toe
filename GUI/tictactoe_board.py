@@ -2,6 +2,8 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 import PyQt6.QtWidgets as QtWidgets
 
+from bot.gamestate import EMPTY_CHAR
+
 from typing import Literal, Callable
 
 
@@ -120,8 +122,9 @@ class TicTacToe(QtWidgets.QWidget):
                 color += "; " + COLOR[char if char else 'T']
                 button.setStyleSheet(color)
 
-    def get_state(self) -> list[list[Literal['X', 'O', '']]]:
-        return [[button.text() for button in row] for row in self.buttons]
+    def get_state(self) -> list[list[Literal['X', 'O', ' ']]]:
+        return [[button.text() if button.text() else EMPTY_CHAR for button in row]
+                for row in self.buttons]
 
 class UltimateTicTacToe(QtWidgets.QWidget):
     def __init__(self, format_board_func: Callable[[tuple[int, int], 'TicTacToe'], None]):
@@ -162,6 +165,10 @@ class UltimateTicTacToe(QtWidgets.QWidget):
         self.overlay_label.setStyleSheet(color)
         self.overlay_label.setHidden(False)
 
+    def block_clicks(self, block: bool) -> None:
+        self.overlay_label.setStyleSheet(f"background-color: rgba(255, 255, 255, {0 if block else 50})")
+        self.overlay_label.setHidden(not block)
+
     def get_winner(self) -> Literal['X', 'O', 'T', '']:
         empty_square: bool = False
         main_diag = []
@@ -182,5 +189,6 @@ class UltimateTicTacToe(QtWidgets.QWidget):
 
         return '' if empty_square else 'T'
     
-    def get_state(self) -> list[list[Literal['X', 'O', '']]]:
-        raise NotImplementedError()
+    def get_state(self) -> list[list[Literal['X', 'O', ' ']]]:
+        return [[txt if (txt := board.overlay_label.text()) else EMPTY_CHAR
+                 for board in row] for row in self.boards]

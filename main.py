@@ -1,14 +1,12 @@
-import random as rand
 from functools import wraps
 
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QThreadPool
 from PyQt6.QtGui import QFont
 import PyQt6.QtWidgets as QtWidgets
 
 from GUI.tictactoe_board import TicTacToe, UltimateTicTacToe
 from GUI.menus import NewGameMenu, InGameMenu
-from minimax.minimax import find_move
-from minimax.gamestate import EMPTY_CHAR
+from GUI.bot_process import BotProcess
 
 from typing import Optional, Literal
 ### X ALWAYS GOES FIRST!!!
@@ -29,13 +27,21 @@ INFO_FONT: QFont = QFont()
 INFO_FONT.setPointSize(16)
 
 
-def undo_decor(func):
-    @wraps(func)
+def undo_decor(undo_func):
+    @wraps(undo_func)
     def undo_inner(*args, **kwargs):
+        if not current_task.isFinished:
+            # if bot is searching, no undo
+            return
+
         var_to_use = game if gametype == 'Ultimate' else game.boards[1][1]
         if (not len(prev_states)) or var_to_use.get_winner(): return
-        func()
-        if gamemode == 'Bot': func()
+
+        if (gamemode == 'Bot') and (len(prev_states) > 1):
+            undo_func()
+            undo_func()
+        elif (gamemode != 'Bot'):
+            undo_func()
     return undo_inner
 
 def board_cleanup():
@@ -53,6 +59,8 @@ def board_cleanup():
 
 def restart():
     global x_turn, bot_goes_first
+    if not (current_task is None or current_task.isFinished): current_task.stop()
+
     prev_states.clear()
     x_turn = True
 
@@ -105,32 +113,32 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
     if (gamemode == 'Bot') and (
             (bot_goes_first and x_turn) or\
             (not bot_goes_first and not x_turn)
-       ): bot_move()
+       ):
+        bot_move()
 
 def bot_move():
-    if gametype == 'Normal':
-        board = [[cell if cell else EMPTY_CHAR for cell in row]
-                for row in game.boards[1][1].get_state()]
-        temp = find_move(board, 'X' if x_turn else 'O')
+    # make_move does the button click, the task just find the button to click
+    # when the task is running, aboutToQuit signal is connected to the task stop process
+    # this is so that when the program closes, the task is killed
+    global current_task
+    game.block_clicks(True)
 
-        if temp is None: return
-        row, col = temp.previous_move
-        button_to_click = game.boards[1][1].buttons[row][col]
-    else:
-        empty_cells = []
-        if current_board:
-            board_to_click = game.boards[current_board[0]][current_board[1]]
-        else:
-            board_to_click = rand.choice([board for row in game.boards for board in row
-                                          if board.overlay_label.isHidden()])
-        for row in board_to_click.buttons:
-            for button in row:
-                if not button.text():
-                    empty_cells.append(button)
-        button_to_click = rand.choice(empty_cells)
+    current_task = BotProcess(gametype, game, x_turn, current_board)
+    current_task.signals.output.connect(_bot_click_button)
+    ult_tictactoe.aboutToQuit.connect(current_task.terminate)
 
-    button_to_click.click()
+    threadpool.start(current_task)
 
+def _bot_click_button(button_to_click: QtWidgets.QPushButton | None, task: BotProcess):
+    # however, to avoid multiple connections to task that has stopped running,
+    # everytime the task finishes, the signal is then disconnected
+    ult_tictactoe.aboutToQuit.disconnect(task.terminate)
+    game.block_clicks(False)
+
+    if button_to_click: button_to_click.click()
+
+    task.finish()
+    
 
 
 class Rules(QtWidgets.QWidget):
@@ -175,12 +183,12 @@ class Home(QtWidgets.QWidget):
         hamburger_butt.setIcon(ico)
         hamburger_butt.setIconSize(QSize(50, 50))
 
-        reset_button = QtWidgets.QPushButton('New Game')
-        reset_button.setFixedSize(80, 30)
+        reset_button = QtWidgets.QPushButton('Restart')
+        reset_button.setFixedSize(70, 30)
         reset_button.clicked.connect(restart)
 
         undo_button = QtWidgets.QPushButton('Undo')
-        undo_button.setFixedSize(50, 30)
+        undo_button.setFixedSize(60, 30)
         undo_button.clicked.connect(undo_move)
 
 
@@ -223,6 +231,10 @@ class Home(QtWidgets.QWidget):
 
     def start_game(self, new_game: bool):
         global game_ongoing, x_turn, bot_goes_first
+        if not (current_task is None or current_task.isFinished):
+            # if the bot is currently searching, stop it
+            current_task.stop()
+
         # make new game but no ongoing game
         if new_game and not game_ongoing:
             game_ongoing = True
@@ -276,5 +288,9 @@ if __name__=="__main__":
 
     ult_tictactoe = QtWidgets.QApplication([])
     root = MainWindow()
+    threadpool = QThreadPool()
+    current_task = BotProcess(gametype, game, x_turn, current_board)
+
+
     root.show()
     ult_tictactoe.exec()
