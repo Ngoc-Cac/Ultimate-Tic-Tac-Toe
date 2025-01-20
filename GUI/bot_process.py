@@ -37,11 +37,9 @@ def find_move_ultimate(main_board: UltimateTicTacToeBoard,
                               board_to_play=board_to_play)
     best_score = -inf
     best_state = None
-    debug_i = 0
     for new_state in state.expand_state():
         if kill_signal[0]: break
 
-        print(debug_i := debug_i + 1)
         score = minimax(new_state, False, max_depth=max_depth)
         if best_score < score:
             best_state = new_state
@@ -66,6 +64,8 @@ class BotProcess(QRunnable):
     def run(self):
         self._isFinished = False
         butt_to_click = _search_move(*self.args, kill_signal=self.kill_signal)
+
+        if self.terminate_sig: return
         self.signals.output.emit(None if self.kill_signal[0] else butt_to_click, self)
 
     @property
@@ -74,6 +74,10 @@ class BotProcess(QRunnable):
     
     def stop(self):
         self.kill_signal[0] = True
+
+    def terminate(self):
+        self.kill_signal[0] = True
+        self.terminate_sig = True
 
     def finish(self):
         self._isFinished = True

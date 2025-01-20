@@ -1,4 +1,3 @@
-import random as rand
 from functools import wraps
 
 from PyQt6.QtCore import Qt, QSize, QThreadPool
@@ -8,7 +7,6 @@ import PyQt6.QtWidgets as QtWidgets
 from GUI.tictactoe_board import TicTacToe, UltimateTicTacToe
 from GUI.menus import NewGameMenu, InGameMenu
 from GUI.bot_process import BotProcess
-from minimax.minimax import find_move_normal, find_move_ultimate
 
 from typing import Optional, Literal
 ### X ALWAYS GOES FIRST!!!
@@ -32,10 +30,18 @@ INFO_FONT.setPointSize(16)
 def undo_decor(undo_func):
     @wraps(undo_func)
     def undo_inner(*args, **kwargs):
+        if not current_task.isFinished:
+            # if bot is searching, no undo
+            return
+
         var_to_use = game if gametype == 'Ultimate' else game.boards[1][1]
         if (not len(prev_states)) or var_to_use.get_winner(): return
-        undo_func()
-        if gamemode == 'Bot': undo_func()
+
+        if (gamemode == 'Bot') and (len(prev_states) > 1):
+            undo_func()
+            undo_func()
+        elif (gamemode != 'Bot'):
+            undo_func()
     return undo_inner
 
 def board_cleanup():
@@ -53,6 +59,8 @@ def board_cleanup():
 
 def restart():
     global x_turn, bot_goes_first
+    if not (current_task is None or current_task.isFinished): current_task.stop()
+
     prev_states.clear()
     x_turn = True
 
@@ -109,14 +117,27 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
         bot_move()
 
 def bot_move():
+    # make_move does the button click, the task just find the button to click
+    # when the task is running, aboutToQuit signal is connected to the task stop process
+    # this is so that when the program closes, the task is killed
+    global current_task
     game.block_clicks(True)
-    def make_move(button_to_click: QtWidgets.QPushButton | None):
-        game.block_clicks(False)
-        if button_to_click: button_to_click.click()
 
-    task = BotProcess(gametype, game, x_turn, current_board)
-    task.signals.output.connect(make_move)
-    threadpool.start(task)
+    current_task = BotProcess(gametype, game, x_turn, current_board)
+    current_task.signals.output.connect(_bot_click_button)
+    ult_tictactoe.aboutToQuit.connect(current_task.terminate)
+
+    threadpool.start(current_task)
+
+def _bot_click_button(button_to_click: QtWidgets.QPushButton | None, task: BotProcess):
+    # however, to avoid multiple connections to task that has stopped running,
+    # everytime the task finishes, the signal is then disconnected
+    ult_tictactoe.aboutToQuit.disconnect(task.terminate)
+    game.block_clicks(False)
+
+    if button_to_click: button_to_click.click()
+
+    task.finish()
     
 
 
@@ -210,6 +231,10 @@ class Home(QtWidgets.QWidget):
 
     def start_game(self, new_game: bool):
         global game_ongoing, x_turn, bot_goes_first
+        if not (current_task is None or current_task.isFinished):
+            # if the bot is currently searching, stop it
+            current_task.stop()
+
         # make new game but no ongoing game
         if new_game and not game_ongoing:
             game_ongoing = True
@@ -263,6 +288,9 @@ if __name__=="__main__":
 
     ult_tictactoe = QtWidgets.QApplication([])
     root = MainWindow()
-    root.show()
     threadpool = QThreadPool()
+    current_task = BotProcess(gametype, game, x_turn, current_board)
+
+
+    root.show()
     ult_tictactoe.exec()
