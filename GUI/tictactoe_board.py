@@ -2,7 +2,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 import PyQt6.QtWidgets as QtWidgets
 
-from minimax.gamestate import EMPTY_CHAR
+from bot.gamestate import EMPTY_CHAR
 
 from typing import Literal, Callable
 
