@@ -76,6 +76,19 @@ def minimax(game_state: GameState | UltimateGameState,
 def find_move_normal(board: TicTacToeBoard, turn: PlayerCharacter, *,
                      kill_signal: list[bool])\
     -> Optional[GameState]:
+    """
+    Find the best move from the current Tic-Tac-Toe board
+
+    ## Parameters:
+    `board`: the current Tic-Tac-Toe board
+    `turn`: the player to make a move
+    `kill_signal`: stopping condition. This should be a list of ONE bool value,\
+        a list is not necessary, any mutable container can be replaced.
+
+    ## Retun
+    the GameState containing the next move to play, access this through the attribute `previous_move`.\
+        Otherwise, if the current state can't be expanded, return `None`.
+    """
     state = GameState(board, turn)
     best_score = -inf
     best_state = None
@@ -93,8 +106,24 @@ def find_move_ultimate(main_board: UltimateTicTacToeBoard,
                        turn: PlayerCharacter,
                        board_to_play: tuple[int, int] = None, *,
                        kill_signal: list[bool],
-                       max_depth: int = 1000)\
+                       max_depth: int = 20)\
     -> Optional[UltimateGameState]:
+    """
+    Find the best move from the current Ultimate Tic-Tac-Toe board
+
+    ## Parameters:
+    `main_board`: the current Ultimate Tic-Tac-Toe board
+    `subboards`: a 3x3 grid of Tic-Tac-Toe boards
+    `turn`: the player to make a move
+    `board_to_play`: the subboard to play on
+    `kill_signal`: stopping condition. This should be a list of ONE bool value,\
+        a list is not necessary, any mutable container can be replaced.
+    `max_depth`: maximum search depth
+
+    ## Return
+    the UltimateGameState containing the next move to play, access this through the\
+        attribute `previous_move`. Otherwise, if the current state can't be expanded, return `None`.
+    """
     state = UltimateGameState(main_board, subboards, turn,
                               board_to_play=board_to_play)
     best_score = -inf
