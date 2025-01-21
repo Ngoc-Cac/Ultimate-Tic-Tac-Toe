@@ -59,6 +59,7 @@ class BotProcess(QRunnable):
         self.kill_signal: list[bool] = [False]
         self.signals = BotSignals()
         self._isFinished = True
+        self.terminate_sig = False
 
     @pyqtSlot()
     def run(self):
