@@ -1,50 +1,10 @@
-from math import inf
-
 from PyQt6.QtCore import QRunnable, QObject, pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import QPushButton
 
-from bot.minimax import minimax
-from bot.gamestate import GameState, UltimateGameState
 from GUI.tictactoe_board import UltimateTicTacToe
+from bot.minimax import find_move_normal, find_move_ultimate
 
 from typing import Literal, Optional
-from bot.gamestate import TicTacToeBoard, UltimateTicTacToeBoard, PlayerCharacter
-
-
-def find_move_normal(board: TicTacToeBoard, turn: PlayerCharacter, *,
-                     kill_signal: list[bool])\
-    -> Optional[GameState]:
-    state = GameState(board, turn)
-    best_score = -inf
-    best_state = None
-    for new_state in state.expand_state():
-        if kill_signal[0]: break
-
-        score = minimax(new_state, False)
-        if best_score < score:
-            best_state = new_state
-            best_score = score
-    return best_state
-
-def find_move_ultimate(main_board: UltimateTicTacToeBoard,
-                       subboards: list[TicTacToeBoard],
-                       turn: PlayerCharacter,
-                       board_to_play: tuple[int, int] = None, *,
-                       max_depth: int = 1000,
-                       kill_signal: list[bool])\
-    -> Optional[UltimateGameState]:
-    state = UltimateGameState(main_board, subboards, turn,
-                              board_to_play=board_to_play)
-    best_score = -inf
-    best_state = None
-    for new_state in state.expand_state():
-        if kill_signal[0]: break
-
-        score = minimax(new_state, False, max_depth=max_depth)
-        if best_score < score:
-            best_state = new_state
-            best_score = score
-    return best_state
 
 
 class BotSignals(QObject): # All Qt widgets inherit QObject.
