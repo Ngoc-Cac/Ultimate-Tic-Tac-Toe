@@ -65,33 +65,52 @@ class MonteCarloNode:
         if result == 'T': self._wins += .5
         elif self._state._play_char != result: self._wins += 1
 
-def monte_carlo_search(root: MonteCarloNode, max_iter: int = 1000) -> MonteCarloNode:
+def monte_carlo_search(root: MonteCarloNode, max_iter: int = 1000, *,
+                       kill_signal: list[bool])\
+    -> MonteCarloNode:
+    """
+    Monte Carlo Tree Search on Tic-Tac-Toe
+    
+    ## Parameters:
+    `root`: the root node
+    `max_iter`: maximum iteration to run for
+    `kill_signal`: external stopping condition. This should be a list of ONE `bool` value,\
+        a list is not necessary, any mutable container can be used.
+
+    ## Return
+    The root node after searching, to get the best move, take the child with the most visits.
+    """
+    if root.is_terminal: return
+
     i = -1
-    while (i := i + 1) < max_iter:
-        leaf_node = _traversal(root)
+    while ((i := i + 1) < max_iter) and (not kill_signal[0]):
+        leaf_node = _traversal(root, kill_signal)
 
         # the game has ended
         if leaf_node is None: continue
-        simulation_result = _simulation(leaf_node)
+        simulation_result = _simulation(leaf_node, kill_signal)
 
-        _backpropogate(leaf_node, simulation_result)
+        _backpropogate(leaf_node, simulation_result, kill_signal)
     return root
 
-def _traversal(node: MonteCarloNode) -> MonteCarloNode:
+def _traversal(node: MonteCarloNode, kill_signal: list[bool]) -> MonteCarloNode:
+    """Selection and expansion state in Monte Carlo Tree Search"""
     # selection
-    while node.fully_expanded:
+    while node.fully_expanded and (not kill_signal[0]):
         node = max(node.children, key=lambda child: child.uct)
 
     # expansion
     for child in node.children:
+        if kill_signal[0]: return
         if not child.visits: return child
 
-def _simulation(node: MonteCarloNode) -> PlayerCharacter | Literal['T']:
-    while not node.is_terminal:
+def _simulation(node: MonteCarloNode, kill_signal: list[bool]) -> PlayerCharacter | Literal['T']:
+    """Simulation state in Monte Carlo Tree Search. Playout is selected randomly"""
+    while not node.is_terminal and (not kill_signal[0]):
         node = rand.choice(list(node.children))
     return node.winner
 
-def _backpropogate(node: MonteCarloNode, result: PlayerCharacter | Literal['T']) -> None:
-    while node:
+def _backpropogate(node: MonteCarloNode, result: PlayerCharacter | Literal['T'], kill_signal: list[bool]) -> None:
+    while node and (not kill_signal[0]):
         node.update(result)
         node = node.parent
