@@ -1,7 +1,7 @@
 import math
 import random as rand
 
-from bot.gamestate import GameState, get_winner
+from bot.gamestate import GameState, UltimateGameState, get_winner
 
 from typing import Iterator, Optional, Literal
 from bot.gamestate import PlayerCharacter
@@ -10,7 +10,7 @@ class MonteCarloNode:
     __slots__ = '_state', '_visits', '_wins',\
                 '_c_coef',\
                 '_children', '_parent'
-    def __init__(self, state: GameState, c_coefficient: float = math.sqrt(2), **kwargs):
+    def __init__(self, state: GameState | UltimateGameState, c_coefficient: float = math.sqrt(2), **kwargs):
         self._state: GameState = state
         self._visits: int = 0
         self._wins: float = 0
@@ -60,6 +60,9 @@ class MonteCarloNode:
         for new_state in self._state.expand_state():
             self._children.append(MonteCarloNode(new_state, self._c_coef, parent=self))
 
+    def playouts(self) -> list[GameState]:
+        return self._state.expand_state()
+
     def update(self, result: PlayerCharacter | Literal['T']):
         self._visits += 1
         if result == 'T': self._wins += .5
@@ -106,9 +109,10 @@ def _traversal(node: MonteCarloNode, kill_signal: list[bool]) -> MonteCarloNode:
 
 def _simulation(node: MonteCarloNode, kill_signal: list[bool]) -> PlayerCharacter | Literal['T']:
     """Simulation state in Monte Carlo Tree Search. Playout is selected randomly"""
-    while not node.is_terminal and (not kill_signal[0]):
-        node = rand.choice(list(node.children))
-    return node.winner
+    state = rand.choice(node.playouts())
+    while not state.game_over and (not kill_signal[0]):
+        state = rand.choice(state.expand_state())
+    return 'T' if (winner := get_winner(state._board_state)) is None else winner
 
 def _backpropogate(node: MonteCarloNode, result: PlayerCharacter | Literal['T'], kill_signal: list[bool]) -> None:
     while node and (not kill_signal[0]):
