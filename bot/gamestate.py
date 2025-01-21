@@ -71,7 +71,6 @@ class GameState():
     `game_over` (`bool`): determines if the game is over (if there is a winner or the game ties)
 
     ## Methods:
-    ---
     `expand_state()`
     `calculate_score()`
     """
