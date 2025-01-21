@@ -4,12 +4,25 @@ from bot.gamestate import GameState, UltimateGameState
 
 # type import
 from typing import Optional
+from bot.gamestate import NumericType
 
 def minimax(game_state: GameState | UltimateGameState,
             maximizing: bool = True, *,
-            max_depth: Optional[int] = None,
+            max_depth: Optional[int] = 20,
             **kwargs)\
-            -> tuple[int, tuple[int, int]]:
+            -> NumericType:
+    """
+    Minimax algorithm with alpha-beta pruning.
+
+    ## Parameters:
+    `game_state` (`GameState | UltimateGameState`): the root state to begin searching
+    `maximizing` (`bool`): if current player is maximizing players
+    `max_depth` (`int | None`): the maximum search depth. By default, this is 20. If there is no\
+        limited depth, set `max_depth` to `None`. Note: be careful as this can lead to a StackOverflow.
+
+    ## Return
+    A number representing the score of the current state.
+    """
     depth = kwargs['depth'] if 'depth' in kwargs else 0
 
     score = game_state.calculate_score()
