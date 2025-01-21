@@ -14,7 +14,7 @@ from bot.gamestate import TicTacToeBoard, UltimateTicTacToeBoard, PlayerCharacte
 def find_move_normal(board: TicTacToeBoard, turn: PlayerCharacter, *,
                      kill_signal: list[bool])\
     -> Optional[GameState]:
-    state = GameState(board, turn, turn)
+    state = GameState(board, turn)
     best_score = -inf
     best_state = None
     for new_state in state.expand_state():
@@ -33,7 +33,7 @@ def find_move_ultimate(main_board: UltimateTicTacToeBoard,
                        max_depth: int = 1000,
                        kill_signal: list[bool])\
     -> Optional[UltimateGameState]:
-    state = UltimateGameState(main_board, subboards, turn, turn,
+    state = UltimateGameState(main_board, subboards, turn,
                               board_to_play=board_to_play)
     best_score = -inf
     best_state = None
