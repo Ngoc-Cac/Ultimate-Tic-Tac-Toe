@@ -2,16 +2,42 @@
 
 from functools import wraps
 
-import PyQt6.QtWidgets as QtWidgets
-from PyQt6.QtCore import Qt, QSize, QThreadPool
+
+from PyQt6.QtCore import (
+    Qt,
+    QThreadPool,
+    QSize
+)
 from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import (
+    QApplication,
+    QFrame,
+    QHBoxLayout,
+    QMainWindow,
+    QPushButton,
+    QStyle,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget
+)
+
 
 from GUI.bot_process import BotProcess
-from GUI.menus import NewGameMenu, InGameMenu
-from GUI.tictactoe_board import TicTacToe, UltimateTicTacToe
+from GUI.menus import (
+    InGameMenu,
+    NewGameMenu
+)
+from GUI.tictactoe_board import (
+    TicTacToe,
+    UltimateTicTacToe
+)
 from GUI.rules_tab import Rules
 
-from typing import Optional, Literal
+
+from typing import (
+    Literal,
+    Optional
+)
 ### X ALWAYS GOES FIRST!!!
 ### if bot mode, who wins gets to go first
 
@@ -134,7 +160,7 @@ def bot_move():
 
     threadpool.start(current_task)
 
-def _bot_click_button(button_to_click: QtWidgets.QPushButton | None, task: BotProcess):
+def _bot_click_button(button_to_click: QPushButton | None, task: BotProcess):
     # however, to avoid multiple connections to task that has stopped running,
     # everytime the task finishes, the signal is then disconnected
     application.aboutToQuit.disconnect(task.terminate)
@@ -145,7 +171,7 @@ def _bot_click_button(button_to_click: QtWidgets.QPushButton | None, task: BotPr
     task.finish()
 
 
-class Home(QtWidgets.QWidget):
+class Home(QWidget):
     def __init__(self):
         super().__init__()
         self.init_gamezone()
@@ -153,7 +179,7 @@ class Home(QtWidgets.QWidget):
 
     def init_menus(self):
         bg_color = "background-color: rgba(0, 0, 0, 170)"
-        self.overlay_menu: dict[Literal['new', 'in-game'], QtWidgets.QFrame] = {}
+        self.overlay_menu: dict[Literal['new', 'in-game'], QFrame] = {}
         self.overlay_menu['new'] = NewGameMenu(self.start_game, self.change_gametype,
                                                self.change_gamemode, self.change_turn,
                                                self)
@@ -173,29 +199,29 @@ class Home(QtWidgets.QWidget):
         game = UltimateTicTacToe(play_turn)
 
 
-        hamburger_butt = QtWidgets.QPushButton(self)
+        hamburger_butt = QPushButton(self)
         hamburger_butt.clicked.connect(self.ingame_menu_popup)
         hamburger_butt.setFixedSize(50, 50)
         ico = hamburger_butt.style()\
-                            .standardIcon(QtWidgets.QStyle.StandardPixmap.SP_FileDialogDetailedView)
+                            .standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView)
         hamburger_butt.setIcon(ico)
         hamburger_butt.setIconSize(QSize(50, 50))
 
-        reset_button = QtWidgets.QPushButton('Restart')
+        reset_button = QPushButton('Restart')
         reset_button.setFixedSize(70, 30)
         reset_button.clicked.connect(restart)
 
-        undo_button = QtWidgets.QPushButton('Undo')
+        undo_button = QPushButton('Undo')
         undo_button.setFixedSize(60, 30)
         undo_button.clicked.connect(undo_move)
 
 
-        hbox = QtWidgets.QHBoxLayout()
+        hbox = QHBoxLayout()
         hbox.addWidget(undo_button)
         hbox.addWidget(reset_button)
         hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
-        vbox = QtWidgets.QVBoxLayout()
+        vbox = QVBoxLayout()
         vbox.addLayout(hbox)
         vbox.addWidget(game)
         vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -253,8 +279,8 @@ class Home(QtWidgets.QWidget):
         self.overlay_menu['in-game'].setHidden(True)
 
 
-class Tabs(QtWidgets.QTabWidget):
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+class Tabs(QTabWidget):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self.home_tab = Home()
@@ -271,8 +297,8 @@ class Tabs(QtWidgets.QTabWidget):
         if (cur_index == 1) and self.home_tab.overlay_menu['new'].isHidden():
             self.home_tab.overlay_menu['in-game'].setHidden(False)
 
-class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, app: QtWidgets.QApplication) -> None:
+class MainWindow(QMainWindow):
+    def __init__(self, app: QApplication) -> None:
         super().__init__()
         self.setWindowTitle("Ultimate Tic-Tac-Toe")
         self.setGeometry(350, 100, *SCREEN_SIZE)

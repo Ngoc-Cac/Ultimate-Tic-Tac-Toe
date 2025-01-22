@@ -1,4 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QLabel
+from PyQt6.QtWidgets import (
+    QLabel,
+    QWidget
+)
 
 class Rules(QWidget):
     def __init__(self):
