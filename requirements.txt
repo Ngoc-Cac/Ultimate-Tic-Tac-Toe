@@ -1,0 +1,2 @@
+# GUI library
+PyQt6==6.8.0
