@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import (
     QMainWindow,
     QPushButton,
     QStyle,
+    QTabBar,
     QTabWidget,
     QVBoxLayout,
     QWidget
@@ -25,7 +26,8 @@ from PyQt6.QtWidgets import (
 from GUI.bot_process import BotProcess
 from GUI.menus import (
     InGameMenu,
-    NewGameMenu
+    NewGameMenu,
+    SettingsMenu
 )
 from GUI.tictactoe_board import (
     TicTacToe,
@@ -51,6 +53,8 @@ bot_goes_first: bool = True
 game_ongoing: bool = False
 gametype: Literal['Normal', 'Ultimate'] = 'Ultimate'
 gamemode: Literal['Human', 'Bot'] = 'Human'
+
+bot_algo: Literal['minimax', 'monte_carlo'] = 'monte_carlo'
 
 INFO_FONT: QFont = QFont()
 INFO_FONT.setPointSize(16)
@@ -154,7 +158,8 @@ def bot_move():
     global current_task
     game.block_clicks(True)
 
-    current_task = BotProcess(gametype, game, x_turn, current_board)
+    current_task = BotProcess(gametype, game, x_turn, current_board,
+                              algorithm_to_use=bot_algo)
     current_task.signals.output.connect(_bot_click_button)
     application.aboutToQuit.connect(current_task.terminate)
 
@@ -180,32 +185,49 @@ class Home(QWidget):
     def init_menus(self):
         bg_color = "background-color: rgba(0, 0, 0, 170)"
         self.overlay_menu: dict[Literal['new', 'in-game'], QFrame] = {}
-        self.overlay_menu['new'] = NewGameMenu(self.start_game, self.change_gametype,
-                                               self.change_gamemode, self.change_turn,
-                                               self)
-        self.overlay_menu['in-game'] = InGameMenu(lambda: self.start_game(False),
-                                                  lambda: self.start_game(True),
-                                                  self)
+        self.overlay_menu['new'] = NewGameMenu(self)
+        self.overlay_menu['new'].play_button.clicked.connect(lambda: self.start_game(True))
+        self.overlay_menu['new'].gametype_box.currentTextChanged.connect(self.change_gametype)
+        self.overlay_menu['new'].mode_box.currentTextChanged.connect(self.change_gamemode)
+        self.overlay_menu['new'].choose_turn_butt.clicked.connect(self.change_turn)
+
+        self.overlay_menu['in-game'] = InGameMenu(self)
+        self.overlay_menu['in-game'].continue_butt.clicked.connect(lambda: self.start_game(False))
+        self.overlay_menu['in-game'].new_game_butt.clicked.connect(lambda: self.start_game(True))
         self.overlay_menu['in-game'].setHidden(True)
+
+        self.overlay_menu['settings'] = SettingsMenu(self)
+        self.overlay_menu['settings'].continue_butt.clicked.connect(lambda: self.start_game(False))
+        self.overlay_menu['settings'].algo_box.currentTextChanged.connect(self.change_bot_algo)
+        self.overlay_menu['settings'].setHidden(True)
+
 
         self.overlay_menu['new'].setStyleSheet(bg_color)
         self.overlay_menu['in-game'].setStyleSheet(bg_color)
+        self.overlay_menu['settings'].setStyleSheet(bg_color)
 
         self.overlay_menu['new'].setFixedSize(*SCREEN_SIZE)
         self.overlay_menu['in-game'].setFixedSize(*SCREEN_SIZE)
+        self.overlay_menu['settings'].setFixedSize(*SCREEN_SIZE)
 
     def init_gamezone(self) -> None:
         global game
         game = UltimateTicTacToe(play_turn)
 
 
-        hamburger_butt = QPushButton(self)
-        hamburger_butt.clicked.connect(self.ingame_menu_popup)
-        hamburger_butt.setFixedSize(50, 50)
-        ico = hamburger_butt.style()\
-                            .standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView)
-        hamburger_butt.setIcon(ico)
-        hamburger_butt.setIconSize(QSize(50, 50))
+        hamburg_ico = QWidget().style()\
+                               .standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView)
+        settings_ico = QWidget().style()\
+                                .standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView)
+        tabbar = QTabBar(self)
+        tabbar.setDrawBase(False)
+        tabbar.setFixedSize(200, 50)
+        tabbar.setIconSize(QSize(25, 25))
+
+        tabbar.addTab(hamburg_ico, None)
+        tabbar.addTab(settings_ico, None)
+        tabbar.tabBarClicked.connect(self.ingame_menu_popup)
+        
 
         reset_button = QPushButton('Restart')
         reset_button.setFixedSize(70, 30)
@@ -249,8 +271,15 @@ class Home(QWidget):
         subject = 'Bot' if bot_goes_first else 'Human'
         self.overlay_menu['new'].choose_turn_butt.setText(subject + ' goes first!')
 
-    def ingame_menu_popup(self):
-        self.overlay_menu['in-game'].setHidden(False)
+    def change_bot_algo(self, text: Literal['Minimax', 'Monte Carlo Tree Search']):
+        global bot_algo
+        bot_algo = 'minimax' if text == 'Minimax' else 'monte_carlo'
+
+    def ingame_menu_popup(self, tab_index: int):
+        if tab_index == 0:
+            self.overlay_menu['in-game'].setHidden(False)
+        elif tab_index == 1:
+            self.overlay_menu['settings'].setHidden(False)
 
 
     def start_game(self, new_game: bool):
@@ -277,6 +306,7 @@ class Home(QWidget):
             game_ongoing = True
 
         self.overlay_menu['in-game'].setHidden(True)
+        self.overlay_menu['settings'].setHidden(True)
 
 
 class Tabs(QTabWidget):
@@ -287,8 +317,6 @@ class Tabs(QTabWidget):
 
         self.addTab(Rules(), 'Rules and Info')
         self.addTab(self.home_tab, 'Play')
-        # add settings tab?
-        # self.addTab(Settings(), 'Settings')
 
         self.setCurrentIndex(1)
         self.currentChanged.connect(self.change_tab_process)
@@ -307,5 +335,6 @@ class MainWindow(QMainWindow):
 
         global threadpool, current_task, application
         threadpool = QThreadPool()
-        current_task = BotProcess(gametype, game, x_turn, current_board)
+        current_task = BotProcess(gametype, game, x_turn, current_board,
+                                  algorithm_to_use=bot_algo)
         application = app
