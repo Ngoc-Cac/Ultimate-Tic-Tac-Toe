@@ -18,6 +18,8 @@ from bot.minimax import (
     find_move_normal,
     find_move_ultimate
 )
+
+from GUI.gamedata import GameData
 from GUI.tictactoe_board import UltimateTicTacToe
 
 from typing import (
@@ -30,22 +32,24 @@ class BotSignals(QObject):
     output=pyqtSignal(object, object)
 
 class BotProcess(QRunnable):
-    def __init__(self, gametype: Literal['Ultimate', 'Normal'],
-                       game: UltimateTicTacToe, x_turn: bool,
-                       current_board: Optional[tuple[int, int]],
-                       algorithm_to_use: Literal['minimax', 'monte_carlo']):
+    def __init__(self, main_state: GameData):
         super().__init__()
-        self.args = [gametype, game, x_turn, current_board]
-        self.algo_to_use = algorithm_to_use
+        self.main_state = main_state
         self.kill_signal: list[bool] = [False]
         self.signals = BotSignals()
         self._isFinished = True
         self.terminate_sig = False
 
+        self.setAutoDelete(False)
+
     @pyqtSlot()
     def run(self):
         self._isFinished = False
-        butt_to_click = _search_move(*self.args, algorithm_to_use=self.algo_to_use,
+        butt_to_click = _search_move(self.main_state.gametype,
+                                     self.main_state.game,
+                                     self.main_state.x_turn,
+                                     self.main_state.current_board,
+                                     algorithm_to_use=self.main_state.bot_algo,
                                      kill_signal=self.kill_signal)
 
         if self.terminate_sig: return
