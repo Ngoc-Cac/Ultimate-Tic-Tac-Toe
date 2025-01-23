@@ -1,10 +1,19 @@
 import math
 import random as rand
 
-from bot.gamestate import GameState, UltimateGameState, get_winner
+from bot.gamestate import (
+    GameState,
+    UltimateGameState,
+    get_winner
+)
 
-from typing import Iterator, Optional, Literal
+from typing import (
+    Iterator,
+    Optional,
+    Literal
+)
 from bot.gamestate import PlayerCharacter
+
 
 class MonteCarloNode:
     __slots__ = '_state', '_visits', '_wins',\

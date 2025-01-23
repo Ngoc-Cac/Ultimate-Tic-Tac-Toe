@@ -1,34 +1,56 @@
-from PyQt6.QtCore import QRunnable, QObject, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import (
+    QObject,
+    QRunnable,
+    pyqtSignal,
+    pyqtSlot
+)
 from PyQt6.QtWidgets import QPushButton
 
+from bot.gamestate import (
+    GameState,
+    UltimateGameState
+)
+from bot.mcts import (
+    MonteCarloNode,
+    monte_carlo_search
+)
+from bot.minimax import (
+    find_move_normal,
+    find_move_ultimate
+)
+
+from data_container.gamedata import GameData
+
 from GUI.tictactoe_board import UltimateTicTacToe
-from bot.minimax import find_move_normal, find_move_ultimate
-from bot.mcts import MonteCarloNode, monte_carlo_search
-from bot.gamestate import GameState, UltimateGameState
 
-from typing import Literal, Optional
+from typing import (
+    Literal,
+    Optional
+)
 
 
-class BotSignals(QObject): # All Qt widgets inherit QObject.
+class BotSignals(QObject):
     output=pyqtSignal(object, object)
 
 class BotProcess(QRunnable):
-    def __init__(self, gametype: Literal['Ultimate', 'Normal'],
-                       game: UltimateTicTacToe, x_turn: bool,
-                       current_board: Optional[tuple[int, int]],
-                       algorithm_to_use: Literal['minimax', 'monte_carlo']):
+    def __init__(self, main_state: GameData):
         super().__init__()
-        self.args = [gametype, game, x_turn, current_board]
-        self.algo_to_use = algorithm_to_use
+        self.main_state = main_state
         self.kill_signal: list[bool] = [False]
         self.signals = BotSignals()
         self._isFinished = True
         self.terminate_sig = False
 
+        self.setAutoDelete(False)
+
     @pyqtSlot()
     def run(self):
         self._isFinished = False
-        butt_to_click = _search_move(*self.args, algorithm_to_use=self.algo_to_use,
+        butt_to_click = _search_move(self.main_state.gametype,
+                                     self.main_state.game,
+                                     self.main_state.x_turn,
+                                     self.main_state.current_board,
+                                     algorithm_to_use=self.main_state.bot_algo,
                                      kill_signal=self.kill_signal)
 
         if self.terminate_sig: return
