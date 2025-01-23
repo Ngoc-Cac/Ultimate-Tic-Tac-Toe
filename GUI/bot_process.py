@@ -1,15 +1,32 @@
-from PyQt6.QtCore import QRunnable, QObject, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import (
+    QObject,
+    QRunnable,
+    pyqtSignal,
+    pyqtSlot
+)
 from PyQt6.QtWidgets import QPushButton
 
+from bot.gamestate import (
+    GameState,
+    UltimateGameState
+)
+from bot.mcts import (
+    MonteCarloNode,
+    monte_carlo_search
+)
+from bot.minimax import (
+    find_move_normal,
+    find_move_ultimate
+)
 from GUI.tictactoe_board import UltimateTicTacToe
-from bot.minimax import find_move_normal, find_move_ultimate
-from bot.mcts import MonteCarloNode, monte_carlo_search
-from bot.gamestate import GameState, UltimateGameState
 
-from typing import Literal, Optional
+from typing import (
+    Literal,
+    Optional
+)
 
 
-class BotSignals(QObject): # All Qt widgets inherit QObject.
+class BotSignals(QObject):
     output=pyqtSignal(object, object)
 
 class BotProcess(QRunnable):
