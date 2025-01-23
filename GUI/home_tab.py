@@ -1,9 +1,14 @@
+import os.path as osp
+
 from PyQt6.QtCore import (
     Qt,
     QSize,
     pyqtSignal
 )
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import (
+    QFont,
+    QIcon
+)
 from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -74,14 +79,13 @@ class Home(QWidget):
         self.overlay_menu['settings'].setFixedSize(*screen_size)
 
     def init_gamezone(self, game: UltimateTicTacToe) -> None:
-        hamburg_ico = QWidget().style()\
-                               .standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView)
-        settings_ico = QWidget().style()\
-                                .standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView)
+        hamburg_ico = QIcon(osp.join('.', 'resource', 'hamburg.png'))
+        settings_ico = QIcon(osp.join('.', 'resource', 'cogwheel.png'))
         tabbar = QTabBar(self)
         tabbar.setDrawBase(False)
-        tabbar.setFixedSize(200, 50)
-        tabbar.setIconSize(QSize(25, 25))
+        tabbar.setStyleSheet("""QTabBar::tab {background-color: transparent;}""")
+        tabbar.setFixedSize(118, 50)
+        tabbar.setIconSize(QSize(30, 30))
 
         tabbar.addTab(hamburg_ico, None)
         tabbar.addTab(settings_ico, None)
