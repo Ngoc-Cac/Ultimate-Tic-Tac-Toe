@@ -180,6 +180,7 @@ class UltimateTicTacToe(QWidget):
         self.overlay_label.setHidden(False)
 
     def block_clicks(self, block: bool) -> None:
+        self.overlay_label.setText('')
         self.overlay_label.setStyleSheet(f"background-color: rgba(255, 255, 255, {0 if block else 50})")
         self.overlay_label.setHidden(not block)
 

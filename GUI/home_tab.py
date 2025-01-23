@@ -117,7 +117,7 @@ class Home(QWidget):
         self.gametype_changed.emit(text)
 
     def change_turn(self):
-        prev_subject = self.overlay_menu['new'].choose_turn_butt.text.split(' ')[0]
+        prev_subject = self.overlay_menu['new'].choose_turn_butt.text().split(' ')[0]
         subject = 'Bot' if prev_subject == 'Human' else 'Human'
         self.overlay_menu['new'].choose_turn_butt.setText(subject + ' goes first!')
         self.first_turn_changed.emit(subject)

@@ -46,6 +46,7 @@ class BotProcess(QRunnable):
     @pyqtSlot()
     def run(self):
         self._isFinished = False
+        self.kill_signal[0] = False
         butt_to_click = _search_move(self.main_state.gametype,
                                      self.main_state.game,
                                      self.main_state.x_turn,
@@ -55,6 +56,7 @@ class BotProcess(QRunnable):
 
         if self.terminate_sig: return
         self.signals.output.emit(None if self.kill_signal[0] else butt_to_click, self)
+        self._isFinished = True
 
     @property
     def isFinished(self):
@@ -66,10 +68,6 @@ class BotProcess(QRunnable):
     def terminate(self):
         self.kill_signal[0] = True
         self.terminate_sig = True
-
-    def finish(self):
-        self._isFinished = True
-
 
 
 def _search_move(gametype: Literal['Ultimate', 'Normal'],

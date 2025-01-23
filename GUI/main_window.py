@@ -139,8 +139,6 @@ def _bot_click_button(button_to_click: QPushButton | None, task: BotProcess):
 
     if button_to_click: button_to_click.click()
 
-    task.finish()
-
 
 class MainWindow(QMainWindow):
     def __init__(self, app: QApplication) -> None:
