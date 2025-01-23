@@ -59,7 +59,10 @@ def board_cleanup():
     current_state.game.overlay_label.setHidden(True)
 
     if current_state.current_board:
-        current_state.game.boards[current_state.current_board[0]][current_state.current_board[1]].focus_board(False)
+        current_state.game\
+                     .boards[current_state.current_board[0]]\
+                            [current_state.current_board[1]]\
+                     .focus_board(False)
         current_state.current_board = None
 
     for i, row in enumerate(current_state.game.boards):
@@ -74,7 +77,7 @@ def restart():
     current_state.x_turn = True
 
     if current_state.gamemode == 'Bot':
-        winner = current_state.game.boards[1][1].get_winner() if current_state.gametype == 'Normal' else current_state.game.get_winner()
+        winner = current_state.game.get_winner(current_state.gametype)
         if winner in 'OT': current_state.bot_goes_first = not current_state.bot_goes_first
 
     board_cleanup()
@@ -106,7 +109,7 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
 
     if (temp := board.get_winner()):
         board.show_winner(temp)
-    if (temp := current_state.game.get_winner()):
+    if (temp := current_state.game.get_winner(current_state.gamemode)):
         current_state.game.show_winner(temp)
         return
     
