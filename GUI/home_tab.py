@@ -13,7 +13,6 @@ from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QPushButton,
-    QStyle,
     QTabBar,
     QVBoxLayout,
     QWidget
