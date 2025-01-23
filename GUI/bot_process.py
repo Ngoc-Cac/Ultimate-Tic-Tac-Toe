@@ -29,6 +29,10 @@ from typing import (
 )
 
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 class BotSignals(QObject):
     output=pyqtSignal(object, object)
 
@@ -73,7 +77,7 @@ class BotProcess(QRunnable):
 def _search_move(gametype: Literal['Ultimate', 'Normal'],
                  game: UltimateTicTacToe, x_turn: bool,
                  current_board: tuple[int, int], *,
-                 algorithm_to_use: Literal['minimax', 'monte_carlo'] = 'monte_carlo',
+                 algorithm_to_use: Literal['minimax', 'monte_carlo'],
                  kill_signal: Optional[list[bool]] = None)\
     -> Optional[QPushButton]:
     if kill_signal is None: kill_signal = [False]
@@ -83,8 +87,10 @@ def _search_move(gametype: Literal['Ultimate', 'Normal'],
         board = game.boards[1][1].get_state()
 
         if algorithm_to_use == 'minimax':
+            logger.info('Running minimax...')
             temp = find_move_normal(board, turn, kill_signal=kill_signal)
         else:
+            logger.info('Running monte carlo...')
             temp = monte_carlo_search(MonteCarloNode(GameState(board, turn)),
                                       max_iter=2000, kill_signal=kill_signal)
             temp = None if temp is None else max(temp.children, key=lambda child: child.visits)._state
@@ -109,15 +115,17 @@ def _search_move(gametype: Literal['Ultimate', 'Normal'],
             subboards.append([board.get_state() for board in row])
 
         if algorithm_to_use == 'minimax':
+            logger.info('Running minimax...')
             temp = find_move_ultimate(game.get_state(), subboards,
                                       turn=turn,
                                       board_to_play=current_board,
                                       max_depth=4,
                                       kill_signal=kill_signal)
         else:
+            logger.info('Running monte carlo...')
             root = UltimateGameState(game.get_state(), subboards, turn,
                                      board_to_play=current_board)
-            temp = monte_carlo_search(MonteCarloNode(root), max_iter=500,
+            temp = monte_carlo_search(MonteCarloNode(root), max_iter=250,
                                       kill_signal=kill_signal)
             temp = None if temp is None else max(temp.children, key=lambda child: child.visits)._state
             

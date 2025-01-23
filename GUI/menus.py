@@ -26,6 +26,7 @@ class NewGameMenu(QFrame):
         
         ## mode choosing zone
         mode_hbox = self.init_gamemode_zone()
+        algo_hbox = self.init_algo_zone()
 
         ## play button zone
         self.play_button = QPushButton('Play!')
@@ -35,6 +36,7 @@ class NewGameMenu(QFrame):
 
         vbox.addLayout(gametype_hbox)
         vbox.addLayout(mode_hbox)
+        vbox.addLayout(algo_hbox)
         vbox.addWidget(self.play_button, alignment=Qt.AlignmentFlag.AlignHCenter)
         vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setLayout(vbox)
@@ -87,6 +89,28 @@ class NewGameMenu(QFrame):
         mode_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         return mode_hbox
     
+    def init_algo_zone(self):
+        self.choose_algo_box = QComboBox()
+        self.choose_algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
+        self.choose_algo_box.setCurrentIndex(1)
+        self.choose_algo_box.setStyleSheet(TRANSPARENT_BG)
+        self.choose_algo_box.setFont(INFO_FONT)
+        self.choose_algo_box.setFixedSize(260, 50)
+        self.choose_algo_box.setHidden(True)
+
+        self.algo_label = QLabel('Algorithm:')
+        self.algo_label.setStyleSheet(TRANSPARENT_BG)
+        self.algo_label.setFont(INFO_FONT)
+        self.algo_label.setFixedSize(110, 30)
+        self.algo_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+        self.algo_label.setHidden(True)
+
+        algo_hbox = QHBoxLayout()
+        algo_hbox.addWidget(self.algo_label)
+        algo_hbox.addWidget(self.choose_algo_box)
+        algo_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        return algo_hbox
+    
 class InGameMenu(QFrame):
     def __init__(self, parent = None):
         super().__init__(parent)
@@ -127,10 +151,10 @@ class SettingsMenu(QFrame):
     def init_algo_choice(self):
         self.algo_box = QComboBox()
         self.algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
-        self.algo_box.setCurrentIndex(0)
+        self.algo_box.setCurrentIndex(1)
         self.algo_box.setStyleSheet(TRANSPARENT_BG)
         self.algo_box.setFont(INFO_FONT)
-        self.algo_box.setFixedSize(115, 50)
+        self.algo_box.setFixedSize(260, 50)
 
         info_label = QLabel('Algorithm:')
         info_label.setStyleSheet(TRANSPARENT_BG)

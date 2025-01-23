@@ -52,6 +52,7 @@ class Home(QWidget):
         self.overlay_menu['new'].gametype_box.currentTextChanged.connect(self.change_gametype)
         self.overlay_menu['new'].mode_box.currentTextChanged.connect(self.change_gamemode)
         self.overlay_menu['new'].choose_turn_butt.clicked.connect(self.change_turn)
+        self.overlay_menu['new'].choose_algo_box.currentTextChanged.connect(self.change_bot_algo)
 
         self.overlay_menu['in-game'] = InGameMenu(self)
         self.overlay_menu['in-game'].continue_butt.clicked.connect(lambda: self.start_game(False))
@@ -111,6 +112,8 @@ class Home(QWidget):
 
     def change_gamemode(self, text: Literal['Human', 'Bot']):
         self.overlay_menu['new'].choose_turn_butt.setHidden(text == 'Human')
+        self.overlay_menu['new'].choose_algo_box.setHidden(text == 'Human')
+        self.overlay_menu['new'].algo_label.setHidden(text == 'Human')
         self.gamemode_changed.emit(text)
     
     def change_gametype(self, text: Literal['Normal', 'Ultimate']):
