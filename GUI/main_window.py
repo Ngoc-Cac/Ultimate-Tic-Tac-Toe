@@ -12,8 +12,9 @@ from PyQt6.QtWidgets import (
     QTabWidget
 )
 
+from data_container.gamedata import GameData
+
 from GUI.bot_process import BotProcess
-from GUI.gamedata import GameData
 from GUI.home_tab import Home
 from GUI.tictactoe_board import (
     TicTacToe,

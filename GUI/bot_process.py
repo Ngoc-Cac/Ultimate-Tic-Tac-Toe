@@ -19,7 +19,8 @@ from bot.minimax import (
     find_move_ultimate
 )
 
-from GUI.gamedata import GameData
+from data_container.gamedata import GameData
+
 from GUI.tictactoe_board import UltimateTicTacToe
 
 from typing import (
