@@ -31,6 +31,26 @@ SMALL_WINNER_FONT.setPointSize(100)
 WINNER_FONT: QFont = QFont()
 WINNER_FONT.setPointSize(300)
 
+def _get_winner(tictactoe_board: list[list[Literal['X', 'O', '']]]):
+    empty_square: bool = False
+    main_diag = []
+    sub_diag = []
+    for i, lis in enumerate(tictactoe_board):
+        row, col = '', ''
+        for j, val in enumerate(lis):
+            row += val
+            col += tictactoe_board[j][i]
+        main_diag.append(lis[i])
+        sub_diag.append(tictactoe_board[2 - i][i])
+        if (len(row) == 3) and (len(set(row)) == 1): return row[0]
+        if (len(col) == 3) and (len(set(col)) == 1): return col[0]
+        if (len(row) != 3) or (len(col) != 3): empty_square = True
+    
+    if len(set(main_diag)) == 1: return main_diag[0]
+    if len(set(sub_diag)) == 1: return sub_diag[0]
+
+    return '' if empty_square else 'T'
+
 
 class TicTacToe(QWidget):
     def __init__(self, position: tuple[int, int],
@@ -94,24 +114,8 @@ class TicTacToe(QWidget):
                 button.setEnabled(True)
 
     def get_winner(self) -> Literal['X', 'O', 'T', '']:
-        empty_square: bool = False
-        main_diag = []
-        sub_diag = []
-        for i in range(3):
-            row, col = '', ''
-            for j in range(3):
-                row += self.buttons[i][j].text()
-                col += self.buttons[j][i].text()
-            main_diag.append(self.buttons[i][i].text())
-            sub_diag.append(self.buttons[2 - i][i].text())
-            if (len(row) == 3) and (len(set(row)) == 1): return row[0]
-            if (len(col) == 3) and (len(set(col)) == 1): return col[0]
-            if (len(row) != 3) or (len(col) != 3): empty_square = True
-        
-        if len(set(main_diag)) == 1: return main_diag[0]
-        if len(set(sub_diag)) == 1: return sub_diag[0]
-
-        return '' if empty_square else 'T'
+        tictactoe_board = [[button.text() for button in row] for row in self.buttons]
+        return _get_winner(tictactoe_board)
 
     def show_winner(self, winner: Literal['X', 'O', 'T']) -> None:
         color = "background-color: rgba(255, 255, 255, 15)"
@@ -187,25 +191,12 @@ class UltimateTicTacToe(QWidget):
                 board.overlay_label.setHidden(mode != 'Normal')
 
 
-    def get_winner(self) -> Literal['X', 'O', 'T', '']:
-        empty_square: bool = False
-        main_diag = []
-        sub_diag = []
-        for i in range(3):
-            row, col = '', ''
-            for j in range(3):
-                row += self.boards[i][j].overlay_label.text()
-                col += self.boards[j][i].overlay_label.text()
-            main_diag.append(self.boards[i][i].overlay_label.text())
-            sub_diag.append(self.boards[2 - i][i].overlay_label.text())
-            if (len(set(row)) == 1) and (len(row) == 3): return row[0]
-            if (len(set(col)) == 1) and (len(col) == 3): return col[0]
-            if len(row) != 3 or len(col) != 3: empty_square = True
-        
-        if len(set(main_diag)) == 1: return main_diag[0]
-        if len(set(sub_diag)) == 1: return sub_diag[0]
-
-        return '' if empty_square else 'T'
+    def get_winner(self, mode: Literal['Ultimate', 'Normal']) -> Literal['X', 'O', 'T', '']:
+        if mode == 'Ultimate':
+            tictactoe_board = [[board.overlay_label.text() for board in row] for row in self.boards]
+        else:
+            tictactoe_board = [[button.text() for button in row] for row in self.boards[1][1].buttons]
+        return _get_winner(tictactoe_board)
     
     def get_state(self) -> list[list[Literal['X', 'O', ' ']]]:
         return [[txt if (txt := board.overlay_label.text()) else EMPTY_CHAR
