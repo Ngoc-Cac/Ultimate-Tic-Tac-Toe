@@ -10,42 +10,36 @@ INFO_FONT.setPointSize(16)
 TRANSPARENT_BG: str = "background-color: transparent"
 
 class NewGameMenu(QtWidgets.QFrame):
-    def __init__(self, start_game_func: Callable[[bool], None],
-                 change_gametype_func: Callable[[], None],
-                 change_gamemode_func: Callable[[], None],
-                 change_turn_func: Callable[[], None],
-                 parent = None) -> None:
+    def __init__(self, parent = None) -> None:
         super().__init__(parent)
         # new game menu
         vbox = QtWidgets.QVBoxLayout()
 
         ## game type choosing zone
-        gametype_hbox = self.init_gametype_zone(change_gametype_func)
+        gametype_hbox = self.init_gametype_zone()
         
         ## mode choosing zone
-        mode_hbox = self.init_gamemode_zone(change_gamemode_func, change_turn_func)
+        mode_hbox = self.init_gamemode_zone()
 
         ## play button zone
-        play_button = QtWidgets.QPushButton('Play!')
-        play_button.clicked.connect(lambda: start_game_func(True))
-        play_button.setStyleSheet(TRANSPARENT_BG)
-        play_button.setFont(INFO_FONT)
-        play_button.setFixedSize(100, 50)
+        self.play_button = QtWidgets.QPushButton('Play!')
+        self.play_button.setStyleSheet(TRANSPARENT_BG)
+        self.play_button.setFont(INFO_FONT)
+        self.play_button.setFixedSize(100, 50)
 
         vbox.addLayout(gametype_hbox)
         vbox.addLayout(mode_hbox)
-        vbox.addWidget(play_button, alignment=Qt.AlignmentFlag.AlignHCenter)
+        vbox.addWidget(self.play_button, alignment=Qt.AlignmentFlag.AlignHCenter)
         vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setLayout(vbox)
 
-    def init_gametype_zone(self, change_gametype_func: Callable[[], None]):
-        gametype_box = QtWidgets.QComboBox()
-        gametype_box.addItems(['Normal', 'Ultimate'])
-        gametype_box.setCurrentIndex(1)
-        gametype_box.setStyleSheet(TRANSPARENT_BG)
-        gametype_box.setFont(INFO_FONT)
-        gametype_box.setFixedSize(115, 50)
-        gametype_box.currentTextChanged.connect(change_gametype_func)
+    def init_gametype_zone(self):
+        self.gametype_box = QtWidgets.QComboBox()
+        self.gametype_box.addItems(['Normal', 'Ultimate'])
+        self.gametype_box.setCurrentIndex(1)
+        self.gametype_box.setStyleSheet(TRANSPARENT_BG)
+        self.gametype_box.setFont(INFO_FONT)
+        self.gametype_box.setFixedSize(115, 50)
 
         decorative_label = QtWidgets.QLabel('Game Type:')
         decorative_label.setStyleSheet(TRANSPARENT_BG)
@@ -55,18 +49,16 @@ class NewGameMenu(QtWidgets.QFrame):
 
         gametype_hbox = QtWidgets.QHBoxLayout()
         gametype_hbox.addWidget(decorative_label)
-        gametype_hbox.addWidget(gametype_box)
+        gametype_hbox.addWidget(self.gametype_box)
         gametype_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         return gametype_hbox
     
-    def init_gamemode_zone(self, change_gamemode_func: Callable[[], None],
-                           change_turn_func: Callable[[], None]):
-        mode_box = QtWidgets.QComboBox()
-        mode_box.addItems(['Human', 'Bot'])
-        mode_box.setStyleSheet(TRANSPARENT_BG)
-        mode_box.setFont(INFO_FONT)
-        mode_box.setFixedSize(115, 50)
-        mode_box.currentTextChanged.connect(change_gamemode_func)
+    def init_gamemode_zone(self):
+        self.mode_box = QtWidgets.QComboBox()
+        self.mode_box.addItems(['Human', 'Bot'])
+        self.mode_box.setStyleSheet(TRANSPARENT_BG)
+        self.mode_box.setFont(INFO_FONT)
+        self.mode_box.setFixedSize(115, 50)
 
         
         self.choose_turn_butt = QtWidgets.QPushButton('Bot goes first!')
@@ -74,7 +66,7 @@ class NewGameMenu(QtWidgets.QFrame):
         self.choose_turn_butt.setHidden(True)
         self.choose_turn_butt.setFixedSize(200, 50)
         self.choose_turn_butt.setStyleSheet(TRANSPARENT_BG)
-        self.choose_turn_butt.clicked.connect(change_turn_func)
+
 
         decorative_label = QtWidgets.QLabel('Mode:')
         decorative_label.setStyleSheet(TRANSPARENT_BG)
@@ -84,31 +76,65 @@ class NewGameMenu(QtWidgets.QFrame):
 
         mode_hbox = QtWidgets.QHBoxLayout()
         mode_hbox.addWidget(decorative_label)
-        mode_hbox.addWidget(mode_box)
+        mode_hbox.addWidget(self.mode_box)
         mode_hbox.addWidget(self.choose_turn_butt)
         mode_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         return mode_hbox
     
 class InGameMenu(QtWidgets.QFrame):
-    def __init__(self, continue_game_func: Callable[[], None],
-                 new_game_func: Callable[[], None],
-                 parent = None):
+    def __init__(self, parent = None):
         super().__init__(parent)
 
-        continue_butt = QtWidgets.QPushButton('Continue Game')
-        continue_butt.clicked.connect(continue_game_func)
-        continue_butt.setFont(INFO_FONT)
-        continue_butt.setFixedSize(180, 50)
-        continue_butt.setStyleSheet(TRANSPARENT_BG)
+        self.continue_butt = QtWidgets.QPushButton('Continue Game')
+        self.continue_butt.setFont(INFO_FONT)
+        self.continue_butt.setFixedSize(180, 50)
+        self.continue_butt.setStyleSheet(TRANSPARENT_BG)
 
-        new_game_butt = QtWidgets.QPushButton('New Game')
-        new_game_butt.clicked.connect(new_game_func)
-        new_game_butt.setFont(INFO_FONT)
-        new_game_butt.setFixedSize(180, 50)
-        new_game_butt.setStyleSheet(TRANSPARENT_BG)
+        self.new_game_butt = QtWidgets.QPushButton('New Game')
+        self.new_game_butt.setFont(INFO_FONT)
+        self.new_game_butt.setFixedSize(180, 50)
+        self.new_game_butt.setStyleSheet(TRANSPARENT_BG)
 
         vbox = QtWidgets.QVBoxLayout()
-        vbox.addWidget(continue_butt)
-        vbox.addWidget(new_game_butt)
+        vbox.addWidget(self.continue_butt)
+        vbox.addWidget(self.new_game_butt)
         vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setLayout(vbox)
+
+class SettingsMenu(QtWidgets.QFrame):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+
+        self.continue_butt = QtWidgets.QPushButton('Continue Game')
+        self.continue_butt.setFont(INFO_FONT)
+        self.continue_butt.setFixedSize(180, 50)
+        self.continue_butt.setStyleSheet(TRANSPARENT_BG)
+
+        algo_zone = self.init_algo_choice()
+        
+        vbox = QtWidgets.QVBoxLayout()
+        vbox.addLayout(algo_zone)
+        vbox.addWidget(self.continue_butt, alignment=Qt.AlignmentFlag.AlignHCenter)
+        vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setLayout(vbox)
+
+    def init_algo_choice(self):
+        self.algo_box = QtWidgets.QComboBox()
+        self.algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
+        self.algo_box.setCurrentIndex(0)
+        self.algo_box.setStyleSheet(TRANSPARENT_BG)
+        self.algo_box.setFont(INFO_FONT)
+        self.algo_box.setFixedSize(115, 50)
+
+        info_label = QtWidgets.QLabel('Algorithm:')
+        info_label.setStyleSheet(TRANSPARENT_BG)
+        info_label.setFont(INFO_FONT)
+        info_label.setFixedSize(110, 30)
+        info_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+
+        hbox = QtWidgets.QHBoxLayout()
+        hbox.addWidget(info_label)
+        hbox.addWidget(self.algo_box)
+        hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        return hbox

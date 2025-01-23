@@ -4,12 +4,25 @@ from bot.gamestate import GameState, UltimateGameState
 
 # type import
 from typing import Optional
+from bot.gamestate import TicTacToeBoard, UltimateTicTacToeBoard, PlayerCharacter, NumericType
 
 def minimax(game_state: GameState | UltimateGameState,
             maximizing: bool = True, *,
-            max_depth: Optional[int] = None,
+            max_depth: Optional[int] = 20,
             **kwargs)\
-            -> tuple[int, tuple[int, int]]:
+            -> NumericType:
+    """
+    Minimax algorithm with alpha-beta pruning.
+
+    ## Parameters:
+    `game_state` (`GameState | UltimateGameState`): the root state to begin searching
+    `maximizing` (`bool`): if current player is maximizing players
+    `max_depth` (`int | None`): the maximum search depth. By default, this is 20. If there is no\
+        limited depth, set `max_depth` to `None`. Note: be careful as this can lead to a StackOverflow.
+
+    ## Return
+    A number representing the score of the current state.
+    """
     depth = kwargs['depth'] if 'depth' in kwargs else 0
 
     score = game_state.calculate_score()
@@ -59,3 +72,67 @@ def minimax(game_state: GameState | UltimateGameState,
 #         recur = minimax(neighbour, not maximizing, depth=depth + 1)
 #         score = optimise_func(score, recur)
 #     return score
+
+def find_move_normal(board: TicTacToeBoard, turn: PlayerCharacter, *,
+                     kill_signal: list[bool])\
+    -> Optional[GameState]:
+    """
+    Find the best move from the current Tic-Tac-Toe board
+
+    ## Parameters:
+    `board`: the current Tic-Tac-Toe board
+    `turn`: the player to make a move
+    `kill_signal`: stopping condition. This should be a list of ONE bool value,\
+        a list is not necessary, any mutable container can be replaced.
+
+    ## Retun
+    the GameState containing the next move to play, access this through the attribute `previous_move`.\
+        Otherwise, if the current state can't be expanded, return `None`.
+    """
+    state = GameState(board, turn)
+    best_score = -inf
+    best_state = None
+    for new_state in state.expand_state():
+        if kill_signal[0]: break
+
+        score = minimax(new_state, False)
+        if best_score < score:
+            best_state = new_state
+            best_score = score
+    return best_state
+
+def find_move_ultimate(main_board: UltimateTicTacToeBoard,
+                       subboards: list[TicTacToeBoard],
+                       turn: PlayerCharacter,
+                       board_to_play: tuple[int, int] = None, *,
+                       kill_signal: list[bool],
+                       max_depth: int = 20)\
+    -> Optional[UltimateGameState]:
+    """
+    Find the best move from the current Ultimate Tic-Tac-Toe board
+
+    ## Parameters:
+    `main_board`: the current Ultimate Tic-Tac-Toe board
+    `subboards`: a 3x3 grid of Tic-Tac-Toe boards
+    `turn`: the player to make a move
+    `board_to_play`: the subboard to play on
+    `kill_signal`: stopping condition. This should be a list of ONE bool value,\
+        a list is not necessary, any mutable container can be replaced.
+    `max_depth`: maximum search depth
+
+    ## Return
+    the UltimateGameState containing the next move to play, access this through the\
+        attribute `previous_move`. Otherwise, if the current state can't be expanded, return `None`.
+    """
+    state = UltimateGameState(main_board, subboards, turn,
+                              board_to_play=board_to_play)
+    best_score = -inf
+    best_state = None
+    for new_state in state.expand_state():
+        if kill_signal[0]: break
+
+        score = minimax(new_state, False, max_depth=max_depth)
+        if best_score < score:
+            best_state = new_state
+            best_score = score
+    return best_state
