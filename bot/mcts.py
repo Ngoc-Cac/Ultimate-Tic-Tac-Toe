@@ -109,10 +109,10 @@ def _traversal(node: MonteCarloNode, kill_signal: list[bool]) -> MonteCarloNode:
 
 def _simulation(node: MonteCarloNode, kill_signal: list[bool]) -> PlayerCharacter | Literal['T']:
     """Simulation state in Monte Carlo Tree Search. Playout is selected randomly"""
-    state = rand.choice(node.playouts())
-    while not state.game_over and (not kill_signal[0]):
-        state = rand.choice(state.expand_state())
-    return 'T' if (winner := get_winner(state._board_state)) is None else winner
+    while not node.is_terminal and (not kill_signal[0]):
+        node = rand.choice(list(node.children))
+
+    return 'T' if (winner := get_winner(node._state._board_state)) is None else winner
 
 def _backpropogate(node: MonteCarloNode, result: PlayerCharacter | Literal['T'], kill_signal: list[bool]) -> None:
     while node and (not kill_signal[0]):
