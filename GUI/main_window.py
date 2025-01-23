@@ -110,7 +110,7 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
 
     if (temp := board.get_winner()):
         board.show_winner(temp)
-    if (temp := current_state.game.get_winner(current_state.gamemode)):
+    if (temp := current_state.game.get_winner(current_state.gametype)):
         current_state.game.show_winner(temp)
         return
     

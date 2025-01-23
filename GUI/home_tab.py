@@ -78,8 +78,8 @@ class Home(QWidget):
         self.overlay_menu['settings'].setFixedSize(*screen_size)
 
     def init_gamezone(self, game: UltimateTicTacToe) -> None:
-        hamburg_ico = QIcon(osp.join('.', 'resource', 'hamburg.png'))
-        settings_ico = QIcon(osp.join('.', 'resource', 'cogwheel.png'))
+        hamburg_ico = QIcon(osp.join('.', 'resource', 'icons', 'hamburg.png'))
+        settings_ico = QIcon(osp.join('.', 'resource', 'icons', 'cogwheel.png'))
         tabbar = QTabBar(self)
         tabbar.setDrawBase(False)
         tabbar.setStyleSheet("""QTabBar::tab {background-color: transparent;}""")
