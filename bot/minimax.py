@@ -1,10 +1,18 @@
 from math import inf
 
-from bot.gamestate import GameState, UltimateGameState
+from bot.gamestate import (
+    GameState,
+    UltimateGameState
+)
 
 # type import
 from typing import Optional
-from bot.gamestate import TicTacToeBoard, UltimateTicTacToeBoard, PlayerCharacter, NumericType
+from bot.gamestate import (
+    NumericType,
+    PlayerCharacter,
+    TicTacToeBoard,
+    UltimateTicTacToeBoard
+)
 
 def minimax(game_state: GameState | UltimateGameState,
             maximizing: bool = True, *,

@@ -1,6 +1,11 @@
 from copy import deepcopy
 
-from typing import TypeAlias, Union, Literal, Optional
+from typing import (
+    Literal,
+    Optional,
+    TypeAlias,
+    Union
+)
 
 
 PlayerCharacter: TypeAlias = Literal['X', 'O']
