@@ -15,9 +15,11 @@ class BotSignals(QObject): # All Qt widgets inherit QObject.
 class BotProcess(QRunnable):
     def __init__(self, gametype: Literal['Ultimate', 'Normal'],
                        game: UltimateTicTacToe, x_turn: bool,
-                       current_board: Optional[tuple[int, int]]):
+                       current_board: Optional[tuple[int, int]],
+                       algorithm_to_use: Literal['minimax', 'monte_carlo']):
         super().__init__()
         self.args = [gametype, game, x_turn, current_board]
+        self.algo_to_use = algorithm_to_use
         self.kill_signal: list[bool] = [False]
         self.signals = BotSignals()
         self._isFinished = True
@@ -26,7 +28,8 @@ class BotProcess(QRunnable):
     @pyqtSlot()
     def run(self):
         self._isFinished = False
-        butt_to_click = _search_move(*self.args, kill_signal=self.kill_signal)
+        butt_to_click = _search_move(*self.args, algorithm_to_use=self.algo_to_use,
+                                     kill_signal=self.kill_signal)
 
         if self.terminate_sig: return
         self.signals.output.emit(None if self.kill_signal[0] else butt_to_click, self)
