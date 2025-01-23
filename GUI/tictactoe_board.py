@@ -1,10 +1,19 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
-import PyQt6.QtWidgets as QtWidgets
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget
+)
 
 from bot.gamestate import EMPTY_CHAR
 
-from typing import Literal, Callable
+from typing import (
+    Literal,
+    Callable
+)
 
 
 COLOR: dict[str, str] = {'X': "color: rgb(255, 0, 0)",
@@ -23,7 +32,7 @@ WINNER_FONT: QFont = QFont()
 WINNER_FONT.setPointSize(300)
 
 
-class TicTacToe(QtWidgets.QWidget):
+class TicTacToe(QWidget):
     def __init__(self, position: tuple[int, int],
                  format_board_func: Callable[[tuple[int, int], 'TicTacToe'], None],
                  parent = None) -> None:
@@ -32,8 +41,8 @@ class TicTacToe(QtWidgets.QWidget):
 
         self.setFixedSize(150, 150)
 
-        self.vbox = QtWidgets.QVBoxLayout()
-        self.hboxes = [QtWidgets.QHBoxLayout() for _ in range(3)]
+        self.vbox = QVBoxLayout()
+        self.hboxes = [QHBoxLayout() for _ in range(3)]
 
         self.init_buttons(format_board_func)
         self.init_overlay()
@@ -44,10 +53,10 @@ class TicTacToe(QtWidgets.QWidget):
     
 
     def init_buttons(self, format_board_func: Callable[[tuple[int, int], 'TicTacToe'], None]) -> None:
-        self.buttons: list[list[QtWidgets.QPushButton]] = [[] for _ in range(3)]
+        self.buttons: list[list[QPushButton]] = [[] for _ in range(3)]
         for i in range(3):
             for j in range(3):
-                self.buttons[i].append(QtWidgets.QPushButton(parent=self))
+                self.buttons[i].append(QPushButton(parent=self))
                 self.buttons[i][j].setFont(PLAYER_FONT)
                 self.buttons[i][j].setFixedSize(50, 50)
                 
@@ -65,7 +74,7 @@ class TicTacToe(QtWidgets.QWidget):
         self.buttons[2][2].pressed.connect(lambda: format_board_func((2, 2), self))
 
     def init_overlay(self) -> None:
-        self.overlay_label = QtWidgets.QLabel('', parent=self)
+        self.overlay_label = QLabel('', parent=self)
         self.overlay_label.setFont(SMALL_WINNER_FONT)
         self.overlay_label.setFixedSize(140, 140)
         self.overlay_label.setHidden(True)
@@ -126,14 +135,14 @@ class TicTacToe(QtWidgets.QWidget):
         return [[button.text() if button.text() else EMPTY_CHAR for button in row]
                 for row in self.buttons]
 
-class UltimateTicTacToe(QtWidgets.QWidget):
+class UltimateTicTacToe(QWidget):
     def __init__(self, format_board_func: Callable[[tuple[int, int], 'TicTacToe'], None]):
         super().__init__()
 
         self.setFixedSize(480, 480)
 
-        self.vbox = QtWidgets.QVBoxLayout()
-        self.hboxes = [QtWidgets.QHBoxLayout() for _ in range(3)]
+        self.vbox = QVBoxLayout()
+        self.hboxes = [QHBoxLayout() for _ in range(3)]
 
         self.init_boards(format_board_func)
         self.init_overlay()
@@ -150,7 +159,7 @@ class UltimateTicTacToe(QtWidgets.QWidget):
                 self.hboxes[i].addWidget(self.boards[i][j])
 
     def init_overlay(self) -> None:
-        self.overlay_label = QtWidgets.QLabel('', self)
+        self.overlay_label = QLabel('', self)
         self.overlay_label.setFont(WINNER_FONT)
         self.overlay_label.setFixedSize(450, 450)
         self.overlay_label.setHidden(True)
