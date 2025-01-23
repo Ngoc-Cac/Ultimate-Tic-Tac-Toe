@@ -259,11 +259,6 @@ class Home(QWidget):
     def change_gametype(self, text: Literal['Normal', 'Ultimate']):
         global gametype
         gametype = text
-        for i, row in enumerate(game.boards):
-            for j, board in enumerate(row):
-                if i == j == 1: continue
-                board.overlay_label.setText('')
-                board.overlay_label.setHidden(text != 'Normal')
 
     def change_turn(self):
         global bot_goes_first
@@ -290,6 +285,7 @@ class Home(QWidget):
 
         # make new game but no ongoing game
         if new_game and not game_ongoing:
+            game.switch_mode(gametype)
             game_ongoing = True
             self.overlay_menu['new'].setHidden(True)
             if (gamemode == 'Bot') and bot_goes_first:
@@ -331,6 +327,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Ultimate Tic-Tac-Toe")
         self.setGeometry(350, 100, *SCREEN_SIZE)
         self.setFixedSize(*SCREEN_SIZE)
+
         self.setCentralWidget(Tabs())
 
         global threadpool, current_task, application

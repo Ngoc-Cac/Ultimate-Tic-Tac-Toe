@@ -167,6 +167,7 @@ class UltimateTicTacToe(QWidget):
         self.overlay_label.setStyleSheet("background-color: rgba(255, 255, 255, 50)")
         self.overlay_label.move(20, 20)
 
+
     def show_winner(self, winner: Literal['X', 'O', 'T']) -> None:
         color = "background-color: rgba(255, 255, 255, 50)"
         color += "; " + COLOR[winner]
@@ -177,6 +178,14 @@ class UltimateTicTacToe(QWidget):
     def block_clicks(self, block: bool) -> None:
         self.overlay_label.setStyleSheet(f"background-color: rgba(255, 255, 255, {0 if block else 50})")
         self.overlay_label.setHidden(not block)
+
+    def switch_mode(self, mode: Literal['Ultimate', 'Normal']) -> None:
+        for i, row in enumerate(self.boards):
+            for j, board in enumerate(row):
+                if i == j == 1: continue
+                board.overlay_label.setText('')
+                board.overlay_label.setHidden(mode != 'Normal')
+
 
     def get_winner(self) -> Literal['X', 'O', 'T', '']:
         empty_square: bool = False
