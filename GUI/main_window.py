@@ -164,6 +164,7 @@ class MainWindow(QMainWindow):
 
         tab_wid.addTab(Rules(), 'Rules and Info')
         tab_wid.addTab(self.home_tab, 'Play')
+        tab_wid.setStyleSheet("QTabWidget::tab-bar {alignment: left;}")
 
         tab_wid.setCurrentIndex(1)
         tab_wid.currentChanged.connect(self.change_tab_process)
