@@ -3,7 +3,19 @@ QTabWidget::tab-bar {
 }
 
 
+UltimateTicTacToe QLabel {
+    background-color: rgba(0, 0, 0, 150);
+    font: 300pt;
+}
 
+TicTacToe QLabel {
+    background-color: rgba(0, 0, 0, 150);
+    font: 100pt;
+}
+TicTacToe QPushButton {
+    background-color: rgb(200, 200, 200);
+    font: 30pt;
+}
 
 
 Home QTabBar::tab {
