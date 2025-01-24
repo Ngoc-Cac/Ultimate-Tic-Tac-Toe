@@ -1,0 +1,45 @@
+QTabWidget::tab-bar {
+    alignment: left;
+}
+
+
+
+NewGameMenu {
+background-color: rgba(0, 0, 0, 200)
+}
+NewGameMenu QPushButton {
+color: rgb(227, 227, 227);
+background-color: transparent;
+}
+NewGameMenu QLabel {
+color: rgb(227, 227, 227);
+background-color: transparent
+}
+NewGameMenu QComboBox {
+color: rgb(227, 227, 227);
+background-color: transparent
+}
+
+InGameMenu {
+background-color: rgba(0, 0, 0, 200)
+}
+InGameMenu QPushButton {
+color: rgb(227, 227, 227);
+background-color: transparent;
+}
+
+SettingsMenu {
+background-color: rgba(0, 0, 0, 200)
+}
+SettingsMenu QPushButton {
+color: rgb(227, 227, 227);
+background-color: transparent;
+}
+SettingsMenu QLabel {
+color: rgb(227, 227, 227);
+background-color: transparent
+}
+SettingsMenu QComboBox {
+color: rgb(227, 227, 227);
+background-color: transparent
+}

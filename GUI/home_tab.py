@@ -69,10 +69,6 @@ class Home(QWidget):
         self.overlay_menu['settings'].setHidden(True)
 
 
-        self.overlay_menu['new'].setStyleSheet(bg_color)
-        self.overlay_menu['in-game'].setStyleSheet(bg_color)
-        self.overlay_menu['settings'].setStyleSheet(bg_color)
-
         self.overlay_menu['new'].setFixedSize(*screen_size)
         self.overlay_menu['in-game'].setFixedSize(*screen_size)
         self.overlay_menu['settings'].setFixedSize(*screen_size)
