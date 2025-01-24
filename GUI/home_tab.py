@@ -69,9 +69,7 @@ class Home(QWidget):
         hamburg_ico = QIcon(osp.join('.', 'resource', 'icons', 'hamburg.png'))
         settings_ico = QIcon(osp.join('.', 'resource', 'icons', 'cogwheel.png'))
         tabbar = QTabBar(self)
-        tabbar.setDrawBase(False)
         tabbar.setFixedSize(118, 50)
-        tabbar.setIconSize(QSize(30, 30))
 
         tabbar.addTab(hamburg_ico, None)
         tabbar.addTab(settings_ico, None)

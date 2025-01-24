@@ -2,70 +2,71 @@ QTabWidget::tab-bar {
     alignment: left;
 }
 
-UltimateTicTacToe QLabel {
-    background-color: rgba(255, 255, 255, 50);
-    font: 300pt;
-}
 
-TicTacToe QLabel {
+TicTacToe > QLabel {
     background-color: rgba(255, 255, 255, 15);
     font: 100pt;
 }
-TicTacToe QPushButton {
+TicTacToe > QPushButton {
     background-color: rgb(60,60,60);
     font: 30pt;
 }
 
+UltimateTicTacToe > QLabel {
+    background-color: rgba(255, 255, 255, 50);
+    font: 300pt;
+}
 
 
+Home QTabBar {
+    qproperty-drawBase: 0;
+    qproperty-iconSize: 30px 30px;
+}
 Home QTabBar::tab {
     background-color: transparent;
 }
+Home QTabBar::tab:hover {
+    background-color: grey;
+}
 
 
-InGameMenu {
-background-color: rgba(0, 0, 0, 200)
+InGameMenu, NewGameMenu, SettingsMenu {
+    background-color: rgba(0, 0, 0, 200)
 }
 InGameMenu QPushButton {
-color: rgb(227, 227, 227);
-background-color: transparent;
-font: bold 16pt;
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: bold 16pt;
 }
 
-NewGameMenu {
-background-color: rgba(0, 0, 0, 170)
-}
 NewGameMenu QComboBox {
-color: rgb(227, 227, 227);
-background-color: transparent;
-font: 16pt;
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: 16pt;
 }
 NewGameMenu QLabel {
-color: rgb(227, 227, 227);
-background-color: transparent;
-font: 16pt;
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: 16pt;
 }
 NewGameMenu QPushButton {
-color: rgb(227, 227, 227);
-background-color: transparent;
-font: bold 16pt;
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: bold 16pt;
 }
 
-SettingsMenu {
-background-color: rgba(0, 0, 0, 200)
-}
 SettingsMenu QComboBox {
-color: rgb(227, 227, 227);
-background-color: transparent;
-font: 16pt;
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: 16pt;
 }
 SettingsMenu QLabel {
-color: rgb(227, 227, 227);
-background-color: transparent;
-font: 16pt;
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: 16pt;
 }
 SettingsMenu QPushButton {
-color: rgb(227, 227, 227);
-background-color: transparent;
-font: bold 16pt;
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: bold 16pt;
 }
