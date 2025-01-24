@@ -4,10 +4,12 @@ Remember that fun little game with noughts and crosses?\
 Yeah it gets boring pretty quickly. So why not try something that goes on a bit longer, and needs some more strategic planning?
 
 #### Table of Contents
-&nbsp;&nbsp;&nbsp;&nbsp;[:scroll:**The Rules**](#the-rules)\
-&nbsp;&nbsp;&nbsp;&nbsp;[:computer:**Running the program**](#how-do-i-run-the-program)
+- [:scroll:**The Rules**](#rules)
+- [:computer:**Running the program**](#program-run)
 
 ---
+<a name="rules">
+
 ## :scroll:The Rules
 Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. However, here you are going to play on a 9x9 grid. This grid is subdivided into 3 smaller boards.
 1. The first move can be made on any of the 81 squares in the grid. Following that, the next move has to be made in the small board with the corresponding position to the position made in the previous small board.
@@ -56,6 +58,8 @@ Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. How
 </details>
 
 ---
+<a name="pogram-run">
+
 ## :computer:How do I run the program?
 1. Before running, be sure to have Python installed. Afterwards, install libraries in `/requirements.txt`.
 2. When everything has been installed, create a `/logs` folder in the same directory where you will run `main.py`.
