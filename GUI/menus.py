@@ -1,5 +1,4 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QComboBox,
     QFrame,
@@ -8,10 +7,6 @@ from PyQt6.QtWidgets import (
     QLabel,
     QVBoxLayout
 )
-
-
-INFO_FONT: QFont = QFont()
-INFO_FONT.setPointSize(16)
 
 
 class NewGameMenu(QFrame):
@@ -29,7 +24,6 @@ class NewGameMenu(QFrame):
 
         ## play button zone
         self.play_button = QPushButton('Play!')
-        self.play_button.setFont(INFO_FONT)
         self.play_button.setFixedSize(100, 50)
 
         vbox.addLayout(gametype_hbox)
@@ -43,11 +37,9 @@ class NewGameMenu(QFrame):
         self.gametype_box = QComboBox()
         self.gametype_box.addItems(['Normal', 'Ultimate'])
         self.gametype_box.setCurrentIndex(1)
-        self.gametype_box.setFont(INFO_FONT)
         self.gametype_box.setFixedSize(115, 50)
 
         decorative_label = QLabel('Game Type:')
-        decorative_label.setFont(INFO_FONT)
         decorative_label.setFixedSize(110, 30)
         decorative_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
 
@@ -60,18 +52,15 @@ class NewGameMenu(QFrame):
     def init_gamemode_zone(self):
         self.mode_box = QComboBox()
         self.mode_box.addItems(['Human', 'Bot'])
-        self.mode_box.setFont(INFO_FONT)
         self.mode_box.setFixedSize(115, 50)
 
         
         self.choose_turn_butt = QPushButton('Bot goes first!')
-        self.choose_turn_butt.setFont(INFO_FONT)
         self.choose_turn_butt.setHidden(True)
         self.choose_turn_butt.setFixedSize(200, 50)
 
 
         decorative_label = QLabel('Mode:')
-        decorative_label.setFont(INFO_FONT)
         decorative_label.setFixedSize(110, 30)
         decorative_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
 
@@ -86,12 +75,10 @@ class NewGameMenu(QFrame):
         self.choose_algo_box = QComboBox()
         self.choose_algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
         self.choose_algo_box.setCurrentIndex(1)
-        self.choose_algo_box.setFont(INFO_FONT)
         self.choose_algo_box.setFixedSize(260, 50)
         self.choose_algo_box.setHidden(True)
 
         self.algo_label = QLabel('Algorithm:')
-        self.algo_label.setFont(INFO_FONT)
         self.algo_label.setFixedSize(110, 30)
         self.algo_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
         self.algo_label.setHidden(True)
@@ -107,11 +94,9 @@ class InGameMenu(QFrame):
         super().__init__(parent)
 
         self.continue_butt = QPushButton('Continue Game')
-        self.continue_butt.setFont(INFO_FONT)
         self.continue_butt.setFixedSize(180, 50)
 
         self.new_game_butt = QPushButton('New Game')
-        self.new_game_butt.setFont(INFO_FONT)
         self.new_game_butt.setFixedSize(180, 50)
 
         vbox = QVBoxLayout()
@@ -125,7 +110,6 @@ class SettingsMenu(QFrame):
         super().__init__(parent)
 
         self.continue_butt = QPushButton('Continue Game')
-        self.continue_butt.setFont(INFO_FONT)
         self.continue_butt.setFixedSize(180, 50)
 
         algo_zone = self.init_algo_choice()
@@ -140,11 +124,9 @@ class SettingsMenu(QFrame):
         self.algo_box = QComboBox()
         self.algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
         self.algo_box.setCurrentIndex(1)
-        self.algo_box.setFont(INFO_FONT)
         self.algo_box.setFixedSize(260, 50)
 
         info_label = QLabel('Algorithm:')
-        info_label.setFont(INFO_FONT)
         info_label.setFixedSize(110, 30)
         info_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
 
