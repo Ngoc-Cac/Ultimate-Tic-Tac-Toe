@@ -1,5 +1,17 @@
+QMainWindow {
+    background-color: rgb(35, 35, 35);
+}
+
+
+QTabWidget {
+    background-color: rgb(50, 50, 50);
+}
 QTabWidget::tab-bar {
     alignment: left;
+}
+QTabWidget > QTabBar {
+    background-color: rgb(35, 35, 35);
+    color: white;
 }
 
 
@@ -18,6 +30,10 @@ UltimateTicTacToe > QLabel {
 }
 
 
+Home > QPushButton {
+    background-color: rgb(70, 70, 70);
+    color: white;
+}
 Home QTabBar {
     qproperty-drawBase: 0;
     qproperty-iconSize: 30px 30px;
@@ -27,6 +43,10 @@ Home QTabBar::tab {
 }
 Home QTabBar::tab:hover {
     background-color: grey;
+}
+
+Rules > QLabel {
+    color: white;
 }
 
 
