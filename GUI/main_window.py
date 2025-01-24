@@ -47,7 +47,7 @@ def undo_decor(undo_func):
             var_to_use = current_state.game
         else:
             var_to_use = current_state.game.boards[1][1]
-        if (not len(current_state.prev_states)) or var_to_use.get_winner(): return
+        if (not len(current_state.prev_states)) or var_to_use.get_winner(current_state.gametype): return
 
         if (current_state.gamemode == 'Bot') and (len(current_state.prev_states) > 1):
             undo_func()
