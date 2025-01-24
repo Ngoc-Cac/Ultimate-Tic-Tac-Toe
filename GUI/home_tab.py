@@ -2,7 +2,6 @@ import os.path as osp
 
 from PyQt6.QtCore import (
     Qt,
-    QSize,
     pyqtSignal
 )
 from PyQt6.QtGui import QIcon

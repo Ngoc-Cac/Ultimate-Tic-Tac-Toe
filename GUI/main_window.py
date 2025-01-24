@@ -4,7 +4,6 @@ from functools import wraps
 
 
 from PyQt6.QtCore import QThreadPool
-from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -29,10 +28,6 @@ import logging
 logger = logging.getLogger(__name__)
 ### X ALWAYS GOES FIRST!!!
 ### if bot mode, who wins gets to go first
-
-INFO_FONT: QFont = QFont()
-INFO_FONT.setPointSize(16)
-
 SCREEN_SIZE = (800, 600)
     
 
