@@ -5,10 +5,7 @@ from PyQt6.QtCore import (
     QSize,
     pyqtSignal
 )
-from PyQt6.QtGui import (
-    QFont,
-    QIcon
-)
+from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -29,10 +26,6 @@ from GUI.tictactoe_board import UltimateTicTacToe
 from typing import Literal
 
 
-INFO_FONT: QFont = QFont()
-INFO_FONT.setPointSize(16)
-
-
 class Home(QWidget):
     gamemode_changed = pyqtSignal(str)
     gametype_changed = pyqtSignal(str)
@@ -49,7 +42,6 @@ class Home(QWidget):
         self.init_menus(screen_size)
 
     def init_menus(self, screen_size: tuple[int, int]):
-        bg_color = "background-color: rgba(0, 0, 0, 170)"
         self.overlay_menu: dict[Literal['new', 'in-game'], QFrame] = {}
         self.overlay_menu['new'] = NewGameMenu(self)
         self.overlay_menu['new'].play_button.clicked.connect(lambda: self.start_game(True))
@@ -78,7 +70,6 @@ class Home(QWidget):
         settings_ico = QIcon(osp.join('.', 'resource', 'icons', 'cogwheel.png'))
         tabbar = QTabBar(self)
         tabbar.setDrawBase(False)
-        tabbar.setStyleSheet("""QTabBar::tab {background-color: transparent;}""")
         tabbar.setFixedSize(118, 50)
         tabbar.setIconSize(QSize(30, 30))
 

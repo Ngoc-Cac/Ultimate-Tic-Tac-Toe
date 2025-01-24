@@ -3,9 +3,13 @@ QTabWidget::tab-bar {
 }
 
 
+Home QTabBar::tab {
+    background-color: transparent;
+}
+
 
 NewGameMenu {
-background-color: rgba(0, 0, 0, 200)
+background-color: rgba(0, 0, 0, 170)
 }
 NewGameMenu QPushButton {
 color: rgb(227, 227, 227);
