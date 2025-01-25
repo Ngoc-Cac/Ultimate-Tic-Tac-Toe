@@ -6,6 +6,7 @@ from traceback import format_exception
 
 from PyQt6.QtWidgets import QApplication
 
+
 from GUI.main_window import MainWindow
 
 
@@ -20,7 +21,9 @@ def except_hook(exc_type, exc_value, exc_tb):
 sys.excepthook = except_hook
 
 
-ult_tictactoe = QApplication([])
+ult_tictactoe = QApplication(sys.argv)
+ult_tictactoe.setStyle('QtCurve')
+
 root = MainWindow(ult_tictactoe)
 
 logger.info('Starting...')

@@ -1,5 +1,4 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
@@ -16,20 +15,14 @@ from typing import (
 )
 
 
-COLOR: dict[str, str] = {'X': "color: rgb(255, 0, 0)",
-                         'O': "color: rgb(0, 0, 255)",
+import logging
+logger = logging.getLogger(__name__)
+
+
+COLOR: dict[str, str] = {'X': "color: rgb(255, 49, 49)",
+                         'O': "color: rgb(0, 131, 255)",
                          'T': "color: rgb(255, 255, 255)",
-                         'focus': "background-color: rgb(127, 255, 212)",
-                         'non_focus': "background-color: rgb(60,60,60)"}
-
-PLAYER_FONT: QFont = QFont()
-PLAYER_FONT.setPointSize(30)
-
-SMALL_WINNER_FONT: QFont = QFont()
-SMALL_WINNER_FONT.setPointSize(100)
-
-WINNER_FONT: QFont = QFont()
-WINNER_FONT.setPointSize(300)
+                         'focus': "background-color: rgb(127, 255, 212)"}
 
 def _get_winner(tictactoe_board: list[list[Literal['X', 'O', '']]]):
     empty_square: bool = False
@@ -77,7 +70,6 @@ class TicTacToe(QWidget):
         for i in range(3):
             for j in range(3):
                 self.buttons[i].append(QPushButton(parent=self))
-                self.buttons[i][j].setFont(PLAYER_FONT)
                 self.buttons[i][j].setFixedSize(50, 50)
                 
                 self.hboxes[i].addWidget(self.buttons[i][j])
@@ -95,11 +87,9 @@ class TicTacToe(QWidget):
 
     def init_overlay(self) -> None:
         self.overlay_label = QLabel('', parent=self)
-        self.overlay_label.setFont(SMALL_WINNER_FONT)
         self.overlay_label.setFixedSize(140, 140)
         self.overlay_label.setHidden(True)
         self.overlay_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.overlay_label.setStyleSheet("background-color: rgba(255, 255, 255, 15)")
         self.overlay_label.move(10, 10)
 
 
@@ -118,8 +108,7 @@ class TicTacToe(QWidget):
         return _get_winner(tictactoe_board)
 
     def show_winner(self, winner: Literal['X', 'O', 'T']) -> None:
-        color = "background-color: rgba(255, 255, 255, 15)"
-        color += "; " + COLOR[winner]
+        color = COLOR[winner]
         self.overlay_label.setText(winner)
         self.overlay_label.setStyleSheet(color)
         self.overlay_label.setHidden(False)
@@ -131,7 +120,7 @@ class TicTacToe(QWidget):
         for row in self.buttons:
             for button in row:
                 char = button.text()
-                color = COLOR['focus' if focus else 'non_focus']
+                color = COLOR['focus'] if focus else ''
                 color += "; " + COLOR[char if char else 'T']
                 button.setStyleSheet(color)
 
@@ -164,24 +153,21 @@ class UltimateTicTacToe(QWidget):
 
     def init_overlay(self) -> None:
         self.overlay_label = QLabel('', self)
-        self.overlay_label.setFont(WINNER_FONT)
         self.overlay_label.setFixedSize(450, 450)
         self.overlay_label.setHidden(True)
         self.overlay_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.overlay_label.setStyleSheet("background-color: rgba(255, 255, 255, 50)")
         self.overlay_label.move(20, 20)
 
 
     def show_winner(self, winner: Literal['X', 'O', 'T']) -> None:
-        color = "background-color: rgba(255, 255, 255, 50)"
-        color += "; " + COLOR[winner]
+        color = COLOR[winner]
         self.overlay_label.setText(winner)
         self.overlay_label.setStyleSheet(color)
         self.overlay_label.setHidden(False)
 
     def block_clicks(self, block: bool) -> None:
         self.overlay_label.setText('')
-        self.overlay_label.setStyleSheet(f"background-color: rgba(255, 255, 255, {0 if block else 50})")
+        self.overlay_label.setStyleSheet("background-color: transparent" if block else '')
         self.overlay_label.setHidden(not block)
 
     def switch_mode(self, mode: Literal['Ultimate', 'Normal']) -> None:

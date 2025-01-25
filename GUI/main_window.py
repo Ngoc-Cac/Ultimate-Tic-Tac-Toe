@@ -1,10 +1,11 @@
 """Contains the MainWindow widget and the home tab"""
 
+import os.path as osp
+
 from functools import wraps
 
 
 from PyQt6.QtCore import QThreadPool
-from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -29,9 +30,11 @@ import logging
 logger = logging.getLogger(__name__)
 ### X ALWAYS GOES FIRST!!!
 ### if bot mode, who wins gets to go first
-
-INFO_FONT: QFont = QFont()
-INFO_FONT.setPointSize(16)
+STYLESHEET = {}
+with open(osp.join('.', 'resource', 'stylesheets', 'styleSheet_light.qss'), mode='r') as file:
+    STYLESHEET['light'] = file.read()
+with open(osp.join('.', 'resource', 'stylesheets', 'styleSheet_dark.qss'), mode='r') as file:
+    STYLESHEET['dark'] = file.read()
 
 SCREEN_SIZE = (800, 600)
     
@@ -146,6 +149,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Ultimate Tic-Tac-Toe")
         self.setGeometry(350, 100, *SCREEN_SIZE)
         self.setFixedSize(*SCREEN_SIZE)
+        self.setStyleSheet(STYLESHEET['dark'])
 
         self.init_gametasks(app)
         self.setCentralWidget(self.init_tabs())
@@ -159,6 +163,7 @@ class MainWindow(QMainWindow):
         self.home_tab.first_turn_changed.connect(self.change_turn)
         self.home_tab.bot_algo_changed.connect(self.change_bot_algo)
         self.home_tab.game_about_to_start.connect(self.start_game)
+        self.home_tab.theme_changed.connect(self.change_theme)
         self.home_tab.restart_signal.connect(restart)
         self.home_tab.undo_signal.connect(undo_move)
 
@@ -181,6 +186,9 @@ class MainWindow(QMainWindow):
         current_task.signals.output.connect(_bot_click_button)
         application.aboutToQuit.connect(current_task.terminate)
 
+
+    def change_theme(self, theme: Literal['light', 'dark']):
+        self.setStyleSheet(STYLESHEET[theme])
 
     def change_tab_process(self, cur_index: int):
         if (cur_index == 1) and self.home_tab.overlay_menu['new'].isHidden():

@@ -1,0 +1,92 @@
+QMainWindow {
+    background-color: white;
+}
+
+
+QTabWidget {
+    background-color: white;
+}
+QTabWidget::tab-bar {
+    alignment: left;
+}
+QTabWidget > QTabBar {
+    background-color: rgba(200, 200, 200, 50);
+    color: black;
+}
+
+
+TicTacToe > QLabel {
+    background-color: rgba(0, 0, 0, 150);
+    font: 100pt;
+}
+TicTacToe > QPushButton {
+    background-color: rgb(200, 200, 200);
+    font: 30pt;
+}
+
+UltimateTicTacToe > QLabel {
+    background-color: rgba(0, 0, 0, 150);
+    font: 300pt;
+}
+
+
+Home > QPushButton {
+    background-color: rgba(200, 200, 200, 50);
+    color: black;
+}
+Home QTabBar {
+    qproperty-drawBase: 0;
+    qproperty-iconSize: 30px 30px;
+}
+Home QTabBar::tab {
+    background-color: transparent;
+}
+Home QTabBar::tab:hover {
+    background-color: rgb(150, 150, 150);
+}
+
+Rules > QLabel {
+    color: black;
+}
+
+
+InGameMenu, NewGameMenu, SettingsMenu {
+    background-color: rgba(0, 0, 0, 200)
+}
+InGameMenu QPushButton {
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: bold 16pt;
+}
+
+NewGameMenu QComboBox {
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: 16pt;
+}
+NewGameMenu QLabel {
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: 16pt;
+}
+NewGameMenu QPushButton {
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: bold 16pt;
+}
+
+SettingsMenu QComboBox {
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: 16pt;
+}
+SettingsMenu QLabel {
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: 16pt;
+}
+SettingsMenu QPushButton {
+    color: rgb(227, 227, 227);
+    background-color: transparent;
+    font: bold 16pt;
+}
