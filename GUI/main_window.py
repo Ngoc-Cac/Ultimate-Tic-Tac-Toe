@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import (
 
 from data_container.gamedata import GameData
 
+from GUI import _ROOT_DIR
 from GUI.bot_process import BotProcess
 from GUI.home_tab import Home
 from GUI.tictactoe_board import (
@@ -31,9 +32,9 @@ logger = logging.getLogger(__name__)
 ### X ALWAYS GOES FIRST!!!
 ### if bot mode, who wins gets to go first
 STYLESHEET = {}
-with open(osp.join('.', 'resource', 'stylesheets', 'styleSheet_light.qss'), mode='r') as file:
+with open(osp.join(_ROOT_DIR, 'resource', 'stylesheets', 'styleSheet_light.qss'), mode='r') as file:
     STYLESHEET['light'] = file.read()
-with open(osp.join('.', 'resource', 'stylesheets', 'styleSheet_dark.qss'), mode='r') as file:
+with open(osp.join(_ROOT_DIR, 'resource', 'stylesheets', 'styleSheet_dark.qss'), mode='r') as file:
     STYLESHEET['dark'] = file.read()
 
 SCREEN_SIZE = (800, 600)

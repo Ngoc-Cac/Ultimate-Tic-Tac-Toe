@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import (
     QWidget
 )
 
+from GUI import _ROOT_DIR
 from GUI.menus import (
     InGameMenu,
     NewGameMenu,
@@ -46,12 +47,12 @@ class Home(QWidget):
     def init_icons(self):
         self.icons = {}
         self.icons['hamburger'] = {
-            'Light': QIcon(osp.join('.', 'resource', 'icons', 'hamburg_black.png')),
-            'Dark': QIcon(osp.join('.', 'resource', 'icons', 'hamburg_white.png'))
+            'Light': QIcon(osp.join(_ROOT_DIR, 'resource', 'icons', 'hamburg_black.png')),
+            'Dark': QIcon(osp.join(_ROOT_DIR, 'resource', 'icons', 'hamburg_white.png'))
         }
         self.icons['cogwheel'] = {
-            'Light': QIcon(osp.join('.', 'resource', 'icons', 'cogwheel_black.png')),
-            'Dark': QIcon(osp.join('.', 'resource', 'icons', 'cogwheel_white.png'))
+            'Light': QIcon(osp.join(_ROOT_DIR, 'resource', 'icons', 'cogwheel_black.png')),
+            'Dark': QIcon(osp.join(_ROOT_DIR, 'resource', 'icons', 'cogwheel_white.png'))
         }
 
     def init_menus(self, screen_size: tuple[int, int]):

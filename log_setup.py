@@ -3,11 +3,13 @@ import os.path as osp
 
 from logging.handlers import RotatingFileHandler
 
+ROOT_DIR = osp.abspath(osp.dirname(__file__))
+
 # set root logger to NOTSET, so all log messages from any other logger is processed
 # check setLevel section for more info
 # https://docs.python.org/3/library/logging.html
 
-log_dir = osp.join('.', 'logs')
+log_dir = osp.join(ROOT_DIR, 'logs')
 
 root_logger = lg.getLogger()
 root_logger.setLevel(lg.NOTSET)
