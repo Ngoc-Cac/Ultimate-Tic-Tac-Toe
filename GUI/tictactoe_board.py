@@ -19,8 +19,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-COLOR: dict[str, str] = {'X': "color: rgb(255, 0, 0)",
-                         'O': "color: rgb(0, 0, 255)",
+COLOR: dict[str, str] = {'X': "color: rgb(255, 49, 49)",
+                         'O': "color: rgb(0, 131, 255)",
                          'T': "color: rgb(255, 255, 255)",
                          'focus': "background-color: rgb(127, 255, 212)"}
 
