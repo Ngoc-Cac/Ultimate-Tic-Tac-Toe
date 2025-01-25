@@ -39,10 +39,10 @@ Home QTabBar {
     qproperty-iconSize: 30px 30px;
 }
 Home QTabBar::tab {
-    background-color: grey;
+    background-color: transparent;
 }
 Home QTabBar::tab:hover {
-    background-color: rgb(30, 30, 30);
+    background-color: rgb(150, 150, 150);
 }
 
 Rules > QLabel {

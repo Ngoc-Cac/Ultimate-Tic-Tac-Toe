@@ -26,6 +26,8 @@ from typing import Literal
 
 
 class Home(QWidget):
+    theme_changed = pyqtSignal(str)
+
     gamemode_changed = pyqtSignal(str)
     gametype_changed = pyqtSignal(str)
     bot_algo_changed = pyqtSignal(str)
@@ -37,8 +39,20 @@ class Home(QWidget):
 
     def __init__(self, game: UltimateTicTacToe, screen_size: tuple[int, int]):
         super().__init__()
+        self.init_icons()
         self.init_gamezone(game)
         self.init_menus(screen_size)
+
+    def init_icons(self):
+        self.icons = {}
+        self.icons['hamburger'] = {
+            'Light': QIcon(osp.join('.', 'resource', 'icons', 'hamburg_black.png')),
+            'Dark': QIcon(osp.join('.', 'resource', 'icons', 'hamburg_white.png'))
+        }
+        self.icons['cogwheel'] = {
+            'Light': QIcon(osp.join('.', 'resource', 'icons', 'cogwheel_black.png')),
+            'Dark': QIcon(osp.join('.', 'resource', 'icons', 'cogwheel_white.png'))
+        }
 
     def init_menus(self, screen_size: tuple[int, int]):
         self.overlay_menu: dict[Literal['new', 'in-game'], QFrame] = {}
@@ -57,6 +71,7 @@ class Home(QWidget):
         self.overlay_menu['settings'] = SettingsMenu(self)
         self.overlay_menu['settings'].continue_butt.clicked.connect(lambda: self.start_game(False))
         self.overlay_menu['settings'].algo_box.currentTextChanged.connect(self.change_bot_algo)
+        self.overlay_menu['settings'].theme_butt.clicked.connect(self.change_theme)
         self.overlay_menu['settings'].setHidden(True)
 
 
@@ -65,14 +80,12 @@ class Home(QWidget):
         self.overlay_menu['settings'].setFixedSize(*screen_size)
 
     def init_gamezone(self, game: UltimateTicTacToe) -> None:
-        hamburg_ico = QIcon(osp.join('.', 'resource', 'icons', 'hamburg.png'))
-        settings_ico = QIcon(osp.join('.', 'resource', 'icons', 'cogwheel.png'))
-        tabbar = QTabBar(self)
-        tabbar.setFixedSize(118, 50)
+        self.tabbar = QTabBar(self)
+        self.tabbar.setFixedSize(118, 50)
 
-        tabbar.addTab(hamburg_ico, None)
-        tabbar.addTab(settings_ico, None)
-        tabbar.tabBarClicked.connect(self.ingame_menu_popup)
+        self.tabbar.addTab(self.icons['hamburger']['Dark'], None)
+        self.tabbar.addTab(self.icons['cogwheel']['Dark'], None)
+        self.tabbar.tabBarClicked.connect(self.ingame_menu_popup)
         
 
         restart_button = QPushButton('Restart')
@@ -96,6 +109,16 @@ class Home(QWidget):
 
         self.setLayout(vbox)
 
+
+    def change_theme(self):
+        prev_theme = self.overlay_menu['settings'].theme_butt.text()
+        new_theme = 'Light' if prev_theme == 'Dark' else 'Dark'
+
+        self.overlay_menu['settings'].theme_butt.setText(new_theme)
+        self.tabbar.setTabIcon(0, self.icons['hamburger'][new_theme])
+        self.tabbar.setTabIcon(1, self.icons['cogwheel'][new_theme])
+
+        self.theme_changed.emit(new_theme.lower())
 
     def change_gamemode(self, text: Literal['Human', 'Bot']):
         self.overlay_menu['new'].choose_turn_butt.setHidden(text == 'Human')
