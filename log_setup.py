@@ -2,6 +2,7 @@ import logging as lg
 import os.path as osp
 
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
 ROOT_DIR = osp.abspath(osp.dirname(__file__))
 
@@ -10,6 +11,8 @@ ROOT_DIR = osp.abspath(osp.dirname(__file__))
 # https://docs.python.org/3/library/logging.html
 
 log_dir = osp.join(ROOT_DIR, 'logs')
+if not osp.exists(log_dir):
+    Path(log_dir).mkdir()
 
 root_logger = lg.getLogger()
 root_logger.setLevel(lg.NOTSET)
