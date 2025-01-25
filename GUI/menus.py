@@ -112,13 +112,30 @@ class SettingsMenu(QFrame):
         self.continue_butt = QPushButton('Continue Game')
         self.continue_butt.setFixedSize(180, 50)
 
+        theme_zone = self.init_theme_choice()
         algo_zone = self.init_algo_choice()
         
         vbox = QVBoxLayout()
+        vbox.addLayout(theme_zone)
         vbox.addLayout(algo_zone)
         vbox.addWidget(self.continue_butt, alignment=Qt.AlignmentFlag.AlignHCenter)
         vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setLayout(vbox)
+
+    def init_theme_choice(self):
+        self.theme_butt = QPushButton('Dark')
+        self.theme_butt.setFixedSize(80, 50)
+
+        theme_label = QLabel('Theme:')
+        theme_label.setFixedSize(110, 30)
+        theme_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(theme_label)
+        hbox.addWidget(self.theme_butt)
+        hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        return hbox
 
     def init_algo_choice(self):
         self.algo_box = QComboBox()
