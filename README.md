@@ -62,5 +62,5 @@ Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. How
 
 ## :computer:How do I run the program?
 1. Before running, be sure to have [Python](https://www.python.org/) installed.
-2. Afterwards, install libraries in `/requirements.txt` using `pip install -r path/to/requirements.txt` or any other means. For more infomation, visit [pip install](https://pip.pypa.io/en/stable/cli/pip_install/#satisfying-requirements)
+2. Afterwards, install libraries in `/requirements.txt` using `pip install -r path/to/requirements.txt` or any other means. For more infomation, visit [pip install](https://pip.pypa.io/en/stable/cli/pip_install/#description).
 2. If everything has been setup correctly, you can now run `main.py` as is.
