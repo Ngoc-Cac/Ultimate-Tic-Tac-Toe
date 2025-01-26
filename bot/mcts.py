@@ -1,3 +1,7 @@
+"""# ``mcts` Module
+Module implementing Monte Carlo Tree Search algorithm to search for the
+most promising move from a Tic-Tac-Toe/Ultimate Tic-Tac-Toe game state.
+"""
 import math
 import random as rand
 

@@ -1,3 +1,6 @@
+"""# `gamestate` Module
+Module with classes to represent states of the Tic-Tac-Toe and Ultimate Tic-Tac-Toe game
+"""
 from copy import deepcopy
 
 from typing import (
