@@ -42,7 +42,16 @@ class MonteCarloNode:
     __slots__ = '_state', '_visits', '_wins',\
                 '_c_coef',\
                 '_children', '_parent'
-    def __init__(self, state: GameState | UltimateGameState, c_coefficient: float = math.sqrt(2), **kwargs):
+    def __init__(self, state: GameState | UltimateGameState,
+                 c_coefficient: float = math.sqrt(2),
+                 **kwargs):
+        """
+        Initialize Monte Carlo node.
+
+        ## Parameters:
+        `state`: `GameState` or `UltimateGameState` representing the current state.
+        `c_coefficient`: a float representing the c coefficient in the [UCT formula](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation).
+        """
         self._state: GameState = state
         self._visits: int = 0
         self._wins: float = 0
