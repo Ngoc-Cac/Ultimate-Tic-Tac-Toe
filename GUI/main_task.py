@@ -7,6 +7,9 @@ from GUI.main_window import MainWindow
 
 import logging as lg
 logger = lg.getLogger(__name__)
+"""
+Code handling execution of application
+"""
 
 
 def main() -> int:

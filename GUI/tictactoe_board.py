@@ -76,15 +76,15 @@ class TicTacToe(QWidget):
         self.vbox = QVBoxLayout()
         self.hboxes = [QHBoxLayout() for _ in range(3)]
 
-        self.init_buttons(format_board_func)
-        self.init_overlay()
+        self._init_buttons(format_board_func)
+        self._init_overlay()
 
         for hbox in self.hboxes:
             self.vbox.addLayout(hbox)
         self.setLayout(self.vbox)
     
 
-    def init_buttons(self, format_board_func: Callable[[tuple[int, int], 'TicTacToe'], None]) -> None:
+    def _init_buttons(self, format_board_func: Callable[[tuple[int, int], 'TicTacToe'], None]) -> None:
         self.buttons: list[list[QPushButton]] = [[] for _ in range(3)]
         for i in range(3):
             for j in range(3):
@@ -104,7 +104,7 @@ class TicTacToe(QWidget):
         self.buttons[2][1].pressed.connect(lambda: format_board_func((2, 1), self))
         self.buttons[2][2].pressed.connect(lambda: format_board_func((2, 2), self))
 
-    def init_overlay(self) -> None:
+    def _init_overlay(self) -> None:
         self.overlay_label = QLabel('', parent=self)
         self.overlay_label.setFixedSize(140, 140)
         self.overlay_label.setHidden(True)
@@ -172,21 +172,21 @@ class UltimateTicTacToe(QWidget):
         self.vbox = QVBoxLayout()
         self.hboxes = [QHBoxLayout() for _ in range(3)]
 
-        self.init_boards(format_board_func)
-        self.init_overlay()
+        self._init_boards(format_board_func)
+        self._init_overlay()
 
         for hbox in self.hboxes:
             self.vbox.addLayout(hbox)
         self.setLayout(self.vbox)
 
-    def init_boards(self, format_board_func: Callable[[tuple[int, int], 'TicTacToe'], None]) -> None:
+    def _init_boards(self, format_board_func: Callable[[tuple[int, int], 'TicTacToe'], None]) -> None:
         self.boards: list[list[TicTacToe]] = [[] for _ in range(3)]
         for i in range(3):
             for j in range(3):
                 self.boards[i].append(TicTacToe((i, j), format_board_func, self))
                 self.hboxes[i].addWidget(self.boards[i][j])
 
-    def init_overlay(self) -> None:
+    def _init_overlay(self) -> None:
         self.overlay_label = QLabel('', self)
         self.overlay_label.setFixedSize(450, 450)
         self.overlay_label.setHidden(True)

@@ -3,6 +3,9 @@ import log_setup # import the module to the set up tasks for logging
 import logging as lg
 import sys
 from traceback import format_exception
+"""
+Code for setting up stuff up before executing the application
+"""
 
 
 logger = lg.getLogger(__name__)
