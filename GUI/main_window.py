@@ -138,7 +138,7 @@ def bot_move():
     threadpool.start(current_task)
 
 
-def _bot_click_button(button_to_click: QPushButton | None, task: BotProcess):
+def _bot_click_button(button_to_click: QPushButton | None):
     current_state.game.block_clicks(False)
 
     if button_to_click: button_to_click.click()

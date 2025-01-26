@@ -7,6 +7,9 @@ from PyQt6.QtWidgets import (
     QLabel,
     QVBoxLayout
 )
+"""
+Code for building the UI of Menus inside of Home tab.
+"""
 
 
 class NewGameMenu(QFrame):
@@ -16,11 +19,11 @@ class NewGameMenu(QFrame):
         vbox = QVBoxLayout()
 
         ## game type choosing zone
-        gametype_hbox = self.init_gametype_zone()
+        gametype_hbox = self._init_gametype_zone()
         
         ## mode choosing zone
-        mode_hbox = self.init_gamemode_zone()
-        algo_hbox = self.init_algo_zone()
+        mode_hbox = self._init_gamemode_zone()
+        algo_hbox = self._init_algo_zone()
 
         ## play button zone
         self.play_button = QPushButton('Play!')
@@ -33,7 +36,7 @@ class NewGameMenu(QFrame):
         vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setLayout(vbox)
 
-    def init_gametype_zone(self):
+    def _init_gametype_zone(self):
         self.gametype_box = QComboBox()
         self.gametype_box.addItems(['Normal', 'Ultimate'])
         self.gametype_box.setCurrentIndex(1)
@@ -49,7 +52,7 @@ class NewGameMenu(QFrame):
         gametype_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         return gametype_hbox
     
-    def init_gamemode_zone(self):
+    def _init_gamemode_zone(self):
         self.mode_box = QComboBox()
         self.mode_box.addItems(['Human', 'Bot'])
         self.mode_box.setFixedSize(115, 50)
@@ -71,7 +74,7 @@ class NewGameMenu(QFrame):
         mode_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         return mode_hbox
     
-    def init_algo_zone(self):
+    def _init_algo_zone(self):
         self.choose_algo_box = QComboBox()
         self.choose_algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
         self.choose_algo_box.setCurrentIndex(1)
@@ -112,8 +115,8 @@ class SettingsMenu(QFrame):
         self.continue_butt = QPushButton('Continue Game')
         self.continue_butt.setFixedSize(180, 50)
 
-        theme_zone = self.init_theme_choice()
-        algo_zone = self.init_algo_choice()
+        theme_zone = self._init_theme_choice()
+        algo_zone = self._init_algo_choice()
         
         vbox = QVBoxLayout()
         vbox.addLayout(theme_zone)
@@ -122,7 +125,7 @@ class SettingsMenu(QFrame):
         vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setLayout(vbox)
 
-    def init_theme_choice(self):
+    def _init_theme_choice(self):
         self.theme_butt = QPushButton('Dark')
         self.theme_butt.setFixedSize(80, 50)
 
@@ -137,7 +140,7 @@ class SettingsMenu(QFrame):
 
         return hbox
 
-    def init_algo_choice(self):
+    def _init_algo_choice(self):
         self.algo_box = QComboBox()
         self.algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
         self.algo_box.setCurrentIndex(1)
