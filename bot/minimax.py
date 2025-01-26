@@ -1,6 +1,6 @@
 """# `minimax` Module
-Module implementing Minimax algorithm with Alpha-Beta pruning to search for
-the most promising move from a Tic-Tac-Toe/Ultimate Tic-Tac-Toe game state.
+Module implementing Minimax algorithm with Alpha-Beta pruning to search for\
+    the most promising move from a Tic-Tac-Toe/Ultimate Tic-Tac-Toe game state.
 """
 from math import inf
 

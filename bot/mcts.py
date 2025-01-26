@@ -1,6 +1,6 @@
 """# ``mcts` Module
-Module implementing Monte Carlo Tree Search algorithm to search for the
-most promising move from a Tic-Tac-Toe/Ultimate Tic-Tac-Toe game state.
+Module implementing Monte Carlo Tree Search algorithm to search for the\
+    most promising move from a Tic-Tac-Toe/Ultimate Tic-Tac-Toe game state.
 """
 import math
 import random as rand
@@ -20,6 +20,25 @@ from bot.gamestate import PlayerCharacter
 
 
 class MonteCarloNode:
+    """
+    Class representing the nodes of a Monte Carlo Search Tree.\
+        This class is supposed to extend the GameState classes in `gamestate` modules\
+        for purpose of the Monte Carlo Tree Search algorithm.
+
+    ## Attributes (read-only):
+    `children` (`Iterator[MonteCarloNode]`): the children of the current node.
+    `parent` (`MonteCarloNode`): the parent node of the current node.
+    `fully_expanded` (`bool`): returns whether or not the current node is fully expanded.
+    `is_terminal` (`bool`): returns whether or not the current node is a terminal node.
+    `uct` (`float`): the uct score of the current node.
+    `visits` (`int`): the number of times the node has been visited.
+    `winner` (`Optional[Literal['X', 'O', 'T']]`): the winner of the game state at the current node.
+    `wins` (`float`): the number of times the node reaches a winning state.
+
+    ## Methods:
+    `playouts()`
+    `update()`
+    """
     __slots__ = '_state', '_visits', '_wins',\
                 '_c_coef',\
                 '_children', '_parent'
@@ -33,6 +52,11 @@ class MonteCarloNode:
 
     @property
     def uct(self) -> float:
+        """
+        The UCT score of a Monte Carlo node.\
+            See [here](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation)\
+            for more information.
+        """
         # num win / num visits + c * sqrt(ln(parent visits) / num visits)
         if self._parent is None:
             raise AttributeError('Node has no parent')
@@ -42,13 +66,22 @@ class MonteCarloNode:
                self._c_coef * math.sqrt(math.log(self._parent.visits) / self._visits)
     @property
     def visits(self) -> int:
+        """The number of times the current node has been visited"""
         return self._visits
     @property
     def wins(self) -> float:
+        """
+        The number of winning states the current node has reached through simulation.\
+            For situations that ended in a tie, `wins` is incremented by 0.5.
+        """
         return self._wins
     
     @property
     def winner(self) -> Optional[PlayerCharacter | Literal['T']]:
+        """
+        The winner at the current game state. If the current game state is\
+            not terminal, i.e, the game is not over then None is returned.
+        """
         winner = get_winner(self._state._board_state)
         return 'T' if (winner is None) and self.is_terminal else winner
     @property
@@ -62,9 +95,14 @@ class MonteCarloNode:
     
     @property
     def parent(self) -> 'MonteCarloNode':
+        """The parent node of the current node, root node has no parent."""
         return self._parent
     @property
     def children(self) -> Iterator['MonteCarloNode']:
+        """
+        The children nodes of the current node, terminal nodes do not have any children.
+        Note: An Iterator is returned for the property. 
+        """
         if not len(self._children): self._expand()
         return iter(self._children)
     
@@ -73,10 +111,22 @@ class MonteCarloNode:
         for new_state in self._state.expand_state():
             self._children.append(MonteCarloNode(new_state, self._c_coef, parent=self))
 
-    def playouts(self) -> list[GameState]:
+    def playouts(self) -> list[GameState | UltimateGameState]:
+        """
+        Return all of the possible moves from a position.
+        
+        ## Return
+        A list of GameStates and UltimateGameState.
+        """
         return self._state.expand_state()
 
     def update(self, result: PlayerCharacter | Literal['T']):
+        """
+        Update the current node from a simulation's result
+        
+        ## Parameters:
+        `result`: a string literal of `'X'`, `'O'` or `T`
+        """
         self._visits += 1
         if result == 'T': self._wins += .5
         elif self._state._play_char != result: self._wins += 1
@@ -109,7 +159,8 @@ def monte_carlo_search(root: MonteCarloNode, max_iter: int = 1000, *,
         _backpropogate(leaf_node, simulation_result, kill_signal)
     return root
 
-def _traversal(node: MonteCarloNode, kill_signal: list[bool]) -> MonteCarloNode:
+def _traversal(node: MonteCarloNode, kill_signal: list[bool])\
+    -> MonteCarloNode:
     """Selection and expansion state in Monte Carlo Tree Search"""
     # selection
     while node.fully_expanded and (not kill_signal[0]):
@@ -120,14 +171,16 @@ def _traversal(node: MonteCarloNode, kill_signal: list[bool]) -> MonteCarloNode:
         if kill_signal[0]: return
         if not child.visits: return child
 
-def _simulation(node: MonteCarloNode, kill_signal: list[bool]) -> PlayerCharacter | Literal['T']:
+def _simulation(node: MonteCarloNode, kill_signal: list[bool])\
+    -> PlayerCharacter | Literal['T']:
     """Simulation state in Monte Carlo Tree Search. Playout is selected randomly"""
     while not node.is_terminal and (not kill_signal[0]):
         node = rand.choice(list(node.children))
 
     return 'T' if (winner := get_winner(node._state._board_state)) is None else winner
 
-def _backpropogate(node: MonteCarloNode, result: PlayerCharacter | Literal['T'], kill_signal: list[bool]) -> None:
+def _backpropogate(node: MonteCarloNode, result: PlayerCharacter | Literal['T'],
+                   kill_signal: list[bool]):
     while node and (not kill_signal[0]):
         node.update(result)
         node = node.parent
