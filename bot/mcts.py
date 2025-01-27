@@ -91,12 +91,11 @@ class MonteCarloNode:
         The winner at the current game state. If the current game state is\
             not terminal, i.e, the game is not over then None is returned.
         """
-        winner = get_winner(self._state._board_state)
-        return 'T' if (winner is None) and self.is_terminal else winner
+        return self._state.game_over
     @property
     def is_terminal(self) -> bool:
         """A node is terminal if it results in a win/loss/tie"""
-        return self._state.game_over
+        return (not self._state.game_over is None)
     @property
     def fully_expanded(self) -> bool:
         """A node is fully_expanded if it has children and every children has been visited"""
@@ -138,7 +137,8 @@ class MonteCarloNode:
         """
         self._visits += 1
         if result == 'T': self._wins += .5
-        elif self._state._play_char != result: self._wins += 1
+        elif self._state.play_char != result: self._wins += 1
+        else: self._wins -= 1
 
 def monte_carlo_search(root: MonteCarloNode, max_iter: int = 1000, *,
                        kill_signal: list[bool])\
