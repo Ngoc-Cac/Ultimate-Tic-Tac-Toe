@@ -105,6 +105,7 @@ def undo_move():
     current_state.x_turn = not current_state.x_turn
 
 def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
+    logger.info(f"Button was pressed at ({*position, *board.position})")
     if current_state.current_board and current_state.current_board != board.position: return
 
     board.buttons[position[0]][position[1]].setText('X' if current_state.x_turn else 'O')
@@ -115,7 +116,8 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
     if (temp := board.get_winner()):
         board.show_winner(temp)
     if (temp := current_state.game.get_winner(current_state.gametype)):
-        current_state.game.show_winner(temp)
+        if current_state.gametype == 'Ultimate':
+            current_state.game.show_winner(temp)
         return
     
     current_state.prev_states.append((position, board))
@@ -136,12 +138,13 @@ def bot_move():
     # this is so that when the program closes, the task is killed
     current_state.game.block_clicks(True)
     threadpool.start(current_task)
+    # display loading gif
 
 
 def _bot_click_button(button_to_click: QPushButton | None):
-    current_state.game.block_clicks(False)
-
+    # end loading gif
     if button_to_click: button_to_click.click()
+    current_state.game.block_clicks(False)
 
 
 class MainWindow(QMainWindow):

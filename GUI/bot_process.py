@@ -125,11 +125,10 @@ def _search_move(gametype: Literal['Ultimate', 'Normal'],
             logger.info('Running monte carlo...')
             root = UltimateGameState(game.get_state(), subboards, turn,
                                      board_to_play=current_board)
-            temp = monte_carlo_search(MonteCarloNode(root), max_iter=250,
+            temp = monte_carlo_search(MonteCarloNode(root), max_iter=300,
                                       kill_signal=kill_signal)
             temp = None if temp is None else max(temp.children, key=lambda child: child.visits)._state
             
         if temp is None: return
         b2p_row, b2p_col, row, col = temp.previous_move
-
     return game.boards[b2p_row][b2p_col].buttons[row][col]
