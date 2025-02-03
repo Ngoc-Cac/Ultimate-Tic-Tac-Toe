@@ -8,7 +8,7 @@ Yeah it gets boring pretty quickly. So why not try something that goes on a bit 
 - [:computer:**Running the program**](#program-run)
 
 ---
-<a name="rules">
+<a name="rules"></a>
 
 ## :scroll:The Rules
 Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. However, here you are going to play on a 9x9 grid. This grid is subdivided into 3 smaller boards.
@@ -58,7 +58,7 @@ Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. How
 </details>
 
 ---
-<a name="pogram-run">
+<a name="program-run"></a>
 
 ## :computer:How do I run the program?
 1. Before running, be sure to have [Python](https://www.python.org/) installed, Python 3.12 is highly recommended.
