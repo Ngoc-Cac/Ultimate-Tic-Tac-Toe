@@ -24,7 +24,7 @@ Code for building the Tic-Tac-Toe UI.
 COLOR: dict[str, str] = {'X': "color: rgb(255, 49, 49)",
                          'O': "color: rgb(0, 131, 255)",
                          'T': "color: rgb(255, 255, 255)",
-                         'focus': "background-color: rgb(127, 255, 212)"}
+                         'focus': "background-color: rgb(186, 255, 201)"}
 
 def _get_winner(tictactoe_board: list[list[Literal['X', 'O', '']]]):
     """
