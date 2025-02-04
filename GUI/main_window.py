@@ -6,6 +6,7 @@ from functools import wraps
 
 
 from PyQt6.QtCore import QThreadPool
+from PyQt6.QtGui import QMovie
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -38,7 +39,7 @@ with open(osp.join(_ROOT_DIR, 'resource', 'stylesheets', 'styleSheet_dark.qss'),
     STYLESHEET['dark'] = file.read()
 
 SCREEN_SIZE = (800, 600)
-    
+
 
 def undo_decor(undo_func):
     @wraps(undo_func)
@@ -139,12 +140,17 @@ def bot_move():
     current_state.game.block_clicks(True)
     threadpool.start(current_task)
     # display loading gif
+    current_state.game.overlay_label.setMovie(LOADING_MOVIE)
+    LOADING_MOVIE.start()
 
 
 def _bot_click_button(button_to_click: QPushButton | None):
     # end loading gif
     if button_to_click: button_to_click.click()
+    current_state.game.overlay_label.setMovie(None)
     current_state.game.block_clicks(False)
+
+    LOADING_MOVIE.stop()
 
 
 class MainWindow(QMainWindow):
@@ -179,7 +185,8 @@ class MainWindow(QMainWindow):
         return tab_wid
 
     def init_gametasks(self, app: QApplication):
-        global threadpool, current_task, application, current_state
+        global threadpool, current_task, application, current_state, LOADING_MOVIE
+        LOADING_MOVIE = QMovie(osp.join(_ROOT_DIR, 'resource', 'gifs', 'loading_placeholder.gif'))
         application = app
 
         self.game = UltimateTicTacToe(play_turn)

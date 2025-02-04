@@ -207,7 +207,7 @@ class UltimateTicTacToe(QWidget):
     def block_clicks(self, block: bool) -> None:
         """Block any clicks on the buttons of the TicTacToe widget"""
         self.overlay_label.setText('')
-        self.overlay_label.setStyleSheet("background-color: transparent" if block else '')
+        self.overlay_label.setStyleSheet("background-color: rgba(255, 255, 255, 10)" if block else '')
         self.overlay_label.setHidden(not block)
 
     def switch_mode(self, mode: Literal['Ultimate', 'Normal']) -> None:
