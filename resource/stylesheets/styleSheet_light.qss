@@ -16,7 +16,7 @@ QTabWidget > QTabBar {
 
 
 TicTacToe > QLabel {
-    background-color: rgba(0, 0, 0, 150);
+    background-color: rgba(0, 0, 0, 50);
     font: 100pt;
 }
 TicTacToe > QPushButton {
@@ -25,7 +25,7 @@ TicTacToe > QPushButton {
 }
 
 UltimateTicTacToe > QLabel {
-    background-color: rgba(0, 0, 0, 150);
+    background-color: rgba(0, 0, 0, 100);
     font: 300pt;
 }
 
