@@ -18,6 +18,9 @@ from typing import (
 )
 from bot.gamestate import PlayerCharacter
 
+import logging
+logger = logging.getLogger()
+
 
 class MonteCarloNode:
     """
@@ -40,8 +43,8 @@ class MonteCarloNode:
     `update()`
     """
     __slots__ = '_state', '_visits', '_wins',\
-                '_c_coef',\
-                '_children', '_parent'
+                '_c_coef', '_c_rave', '_amaf_wins', '_amaf_sims',\
+                '_children', '_parent',
     def __init__(self, state: GameState | UltimateGameState,
                  c_coefficient: float = math.sqrt(2),
                  **kwargs):
@@ -58,6 +61,9 @@ class MonteCarloNode:
         self._children: list[MonteCarloNode] = []
         self._parent: Optional[MonteCarloNode] = kwargs['parent'] if 'parent' in kwargs else None
         self._c_coef = c_coefficient
+        self._c_rave = 20
+        self._amaf_sims = 0
+        self._amaf_wins = 0
 
     @property
     def uct(self) -> float:
@@ -73,6 +79,11 @@ class MonteCarloNode:
 
         return self._wins / self._visits +\
                self._c_coef * math.sqrt(math.log(self._parent.visits) / self._visits)
+    @property
+    def rave(self) -> float:
+        alpha = max(0, (self._c_rave - self._visits) / self._c_rave)
+        amaf = self._amaf_sims / (self._amaf_sims + self._visits + 4 * self._amaf_sims * self._visits)
+        return alpha * amaf + (1 - alpha) * self.uct
     @property
     def visits(self) -> int:
         """The number of times the current node has been visited"""
@@ -140,6 +151,17 @@ class MonteCarloNode:
         elif self._state.play_char != result: self._wins += 1
         else: self._wins -= 1
 
+    def update_amaf(self, result: PlayerCharacter | Literal['T']):
+        """
+        Update the current node from a simulation's result
+        
+        ## Parameters:
+        `result`: a string literal of `'X'`, `'O'` or `T`
+        """
+        self._amaf_sims += 1
+        if result == 'T': self._amaf_wins += .5
+        elif self._state.play_char != result: self._amaf_wins += 1
+
 def monte_carlo_search(root: MonteCarloNode, max_iter: int = 1000, *,
                        kill_signal: list[bool])\
     -> MonteCarloNode:
@@ -165,7 +187,7 @@ def monte_carlo_search(root: MonteCarloNode, max_iter: int = 1000, *,
         if leaf_node is None: continue
         simulation_result = _simulation(leaf_node, kill_signal)
 
-        _backpropogate(leaf_node, simulation_result, kill_signal)
+        _backpropogate(leaf_node, *simulation_result, kill_signal)
     return root
 
 def _traversal(node: MonteCarloNode, kill_signal: list[bool])\
@@ -173,7 +195,7 @@ def _traversal(node: MonteCarloNode, kill_signal: list[bool])\
     """Selection and expansion state in Monte Carlo Tree Search"""
     # selection
     while node.fully_expanded and (not kill_signal[0]):
-        node = max(node.children, key=lambda child: child.uct)
+        node = max(node.children, key=lambda child: child.rave)
 
     # expansion
     for child in node.children:
@@ -183,13 +205,21 @@ def _traversal(node: MonteCarloNode, kill_signal: list[bool])\
 def _simulation(node: MonteCarloNode, kill_signal: list[bool])\
     -> PlayerCharacter | Literal['T']:
     """Simulation state in Monte Carlo Tree Search. Playout is selected randomly"""
+    amaf_history = set()
     while not node.is_terminal and (not kill_signal[0]):
         node = rand.choice(list(node.children))
+        amaf_history.update(node._state.previous_move)
 
-    return 'T' if (winner := get_winner(node._state._board_state)) is None else winner
+    return ('T' if (winner := get_winner(node._state._board_state)) is None else winner), amaf_history
 
 def _backpropogate(node: MonteCarloNode, result: PlayerCharacter | Literal['T'],
-                   kill_signal: list[bool]):
+                   amaf_history: set[tuple], kill_signal: list[bool]):
+    play_char = node._state.play_char
     while node and (not kill_signal[0]):
+        if node.parent:
+            for sibling in node.parent.children:
+                if (play_char == sibling._state.play_char) and\
+                   (sibling._state.previous_move in amaf_history):
+                    sibling.update_amaf(result)
         node.update(result)
         node = node.parent
