@@ -191,6 +191,7 @@ class UltimateTicTacToe(QWidget):
         self.overlay_label.setFixedSize(450, 450)
         self.overlay_label.setHidden(True)
         self.overlay_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.overlay_label.setScaledContents(True)
         self.overlay_label.move(20, 20)
 
 
