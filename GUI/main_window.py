@@ -1,6 +1,7 @@
 """Contains the MainWindow widget and the home tab"""
 
 import os.path as osp
+import time
 
 from functools import wraps
 
@@ -139,24 +140,27 @@ def bot_move():
     # this is so that when the program closes, the task is killed
     current_state.game.block_clicks(True)
     threadpool.start(current_task)
-    # display loading gif
+
     current_state.game.overlay_label.setMovie(LOADING_MOVIE)
-    LOADING_MOVIE.start()
+
+    time.sleep(0.27)
+    if not current_task.isFinished: LOADING_MOVIE.start()
 
 
 def _bot_click_button(button_to_click: QPushButton | None):
-    # end loading gif
     if button_to_click: button_to_click.click()
+
     current_state.game.overlay_label.setMovie(None)
     current_state.game.block_clicks(False)
 
-    LOADING_MOVIE.stop()
+    if LOADING_MOVIE.state() == QMovie.MovieState.Running:
+        LOADING_MOVIE.stop()
 
 
 class MainWindow(QMainWindow):
     def __init__(self, app: QApplication) -> None:
         super().__init__()
-        self.setWindowTitle("Ultimate Tic-Tac-Toe")
+        self.setWindowTitle("The Ultimate Tic-Tac-Toe Game")
         self.setGeometry(350, 100, *SCREEN_SIZE)
         self.setFixedSize(*SCREEN_SIZE)
         self.setStyleSheet(STYLESHEET['dark'])
@@ -186,7 +190,7 @@ class MainWindow(QMainWindow):
 
     def init_gametasks(self, app: QApplication):
         global threadpool, current_task, application, current_state, LOADING_MOVIE
-        LOADING_MOVIE = QMovie(osp.join(_ROOT_DIR, 'resource', 'gifs', 'loading_placeholder.gif'))
+        LOADING_MOVIE = QMovie(osp.join(_ROOT_DIR, 'resource', 'gifs', 'loading.gif'))
         application = app
 
         self.game = UltimateTicTacToe(play_turn)
