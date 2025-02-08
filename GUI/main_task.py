@@ -14,11 +14,11 @@ logger = lg.getLogger(__name__)
 Code handling execution of application
 """
 
-# given the app an id, this is for the purpose of
+# give the app an id, this is for the purpose of
 # setting the app's icon in taskbar for Windows
 try:
     from ctypes import windll
-    myappid = u'ngoccac.ultttt.1'
+    myappid = u'ultttt.1'
     windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except ImportError:
     pass
