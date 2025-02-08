@@ -6,6 +6,7 @@ Yeah it gets boring pretty quickly. So why not try something that goes on a bit 
 #### Table of Contents
 - [:scroll:**The Rules**](#rules)
 - [:computer:**Running the program**](#program-run)
+- [:copyright:**Credits**](#credits)
 
 ---
 <a name="rules"></a>
@@ -61,6 +62,15 @@ Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. How
 <a name="program-run"></a>
 
 ## :computer:How do I run the program?
-1. Before running, be sure to have [Python](https://www.python.org/) installed, Python 3.12 is highly recommended.
+1. Before running, be sure to have [Python](https://www.python.org/) installed, Python 3.12 is highly recommended, 3.10 is minimal.
 2. Afterwards, install libraries in `/requirements.txt` using `pip install -r path/to/requirements.txt` or any other means. For more infomation, visit [pip install](https://pip.pypa.io/en/stable/cli/pip_install/#description).
 2. If everything has been setup correctly, you can now run `main.py` as is.
+
+
+---
+---
+<a name="credits"></a>
+
+## :copyright:Credits
+Special thanks to [Gabriel-Duong](https://github.com/Gabriel-Duong) for creating the loading gif as well as testing out the application!
+The cogwheel and hamburger icons are taken from [FlatIcon](https://www.flaticon.com/)
