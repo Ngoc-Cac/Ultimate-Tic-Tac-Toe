@@ -80,7 +80,8 @@ class Home(QWidget):
         self.overlay_menu['new'].gametype_box.currentTextChanged.connect(self._change_gametype)
         self.overlay_menu['new'].mode_box.currentTextChanged.connect(self._change_gamemode)
         self.overlay_menu['new'].choose_turn_butt.clicked.connect(self._change_turn)
-        self.overlay_menu['new'].choose_algo_box.currentTextChanged.connect(self._change_bot_algo)
+        self.overlay_menu['new'].algo_box.currentTextChanged\
+                                .connect(lambda txt: self._change_bot_algo(txt, 'new'))
 
         self.overlay_menu['in-game'] = InGameMenu(self)
         self.overlay_menu['in-game'].continue_butt.clicked.connect(lambda: self._start_game(False))
@@ -88,7 +89,8 @@ class Home(QWidget):
 
         self.overlay_menu['settings'] = SettingsMenu(self)
         self.overlay_menu['settings'].continue_butt.clicked.connect(lambda: self._start_game(False))
-        self.overlay_menu['settings'].algo_box.currentTextChanged.connect(self._change_bot_algo)
+        self.overlay_menu['settings'].algo_box.currentTextChanged\
+                                     .connect(lambda txt: self._change_bot_algo(txt, 'settings'))
         self.overlay_menu['settings'].theme_butt.clicked.connect(self._change_theme)
 
 
@@ -126,7 +128,7 @@ class Home(QWidget):
 
     def _change_gamemode(self, text: Literal['Human', 'Bot']):
         self.overlay_menu['new'].choose_turn_butt.setHidden(text == 'Human')
-        self.overlay_menu['new'].choose_algo_box.setHidden(text == 'Human')
+        self.overlay_menu['new'].algo_box.setHidden(text == 'Human')
         self.overlay_menu['new'].algo_label.setHidden(text == 'Human')
         self.gamemode_changed.emit(text)
     
@@ -139,7 +141,14 @@ class Home(QWidget):
         self.overlay_menu['new'].choose_turn_butt.setText(subject + ' goes first!')
         self.first_turn_changed.emit(subject)
 
-    def _change_bot_algo(self, text: Literal['Minimax', 'Monte Carlo Tree Search']):
+    def _change_bot_algo(self, text: Literal['Minimax', 'Monte Carlo Tree Search'],
+                         where: Literal['new', 'settings']):
+        sync = 'new' if where != 'new' else 'settings'
+        if self.overlay_menu[sync].algo_box.currentText() != text:
+            self.overlay_menu[sync].algo_box.blockSignals(True)
+            self.overlay_menu[sync].algo_box.setCurrentText(text)
+            self.overlay_menu[sync].algo_box.blockSignals(False)
+
         self.bot_algo_changed.emit(text)
 
     def _ingame_menu_popup(self, tab_index: int):
