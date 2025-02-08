@@ -75,11 +75,11 @@ class NewGameMenu(QFrame):
         return mode_hbox
     
     def _init_algo_zone(self):
-        self.choose_algo_box = QComboBox()
-        self.choose_algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
-        self.choose_algo_box.setCurrentIndex(1)
-        self.choose_algo_box.setFixedSize(260, 50)
-        self.choose_algo_box.setHidden(True)
+        self.algo_box = QComboBox()
+        self.algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
+        self.algo_box.setCurrentIndex(1)
+        self.algo_box.setFixedSize(260, 50)
+        self.algo_box.setHidden(True)
 
         self.algo_label = QLabel('Algorithm:')
         self.algo_label.setFixedSize(110, 30)
@@ -88,7 +88,7 @@ class NewGameMenu(QFrame):
 
         algo_hbox = QHBoxLayout()
         algo_hbox.addWidget(self.algo_label)
-        algo_hbox.addWidget(self.choose_algo_box)
+        algo_hbox.addWidget(self.algo_box)
         algo_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         return algo_hbox
     
