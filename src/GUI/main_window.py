@@ -104,6 +104,12 @@ def undo_move():
         prev_state[1].focus_board()
         current_state.current_board = prev_state[1].position
     else: current_state.current_board = None
+
+    if current_state.prev_states:
+        prev_prev_pos, prev_prev_board = current_state.prev_states[-1]
+        prev_prev_board.highlight_butt(prev_prev_pos)
+    prev_state[1].highlight_butt(prev_state[0], False)
+
     current_state.x_turn = not current_state.x_turn
 
 def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
@@ -111,7 +117,7 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
     if current_state.current_board and current_state.current_board != board.position: return
 
     board.buttons[position[0]][position[1]].setText('X' if current_state.x_turn else 'O')
-    board.buttons[position[0]][position[1]].setDisabled(True)
+    board.buttons[position[0]][position[1]].blockSignals(True)
     board.focus_board(False)
     current_state.x_turn = not current_state.x_turn
 
@@ -122,11 +128,16 @@ def play_turn(position: tuple[int, int], board: TicTacToe) -> None:
             current_state.game.show_winner(temp)
         return
     
-    current_state.prev_states.append((position, board))
     if current_state.game.boards[position[0]][position[1]].overlay_label.isHidden():
         current_state.game.boards[position[0]][position[1]].focus_board(current_state.gametype != 'Normal')
         current_state.current_board = position
     else: current_state.current_board = None
+
+    if current_state.prev_states:
+        prev_pos, prev_board = current_state.prev_states[-1]
+        prev_board.highlight_butt(prev_pos, False)
+    current_state.prev_states.append((position, board))
+    board.highlight_butt(position)
 
     if (current_state.gamemode == 'Bot') and (
             (current_state.bot_goes_first and current_state.x_turn) or\

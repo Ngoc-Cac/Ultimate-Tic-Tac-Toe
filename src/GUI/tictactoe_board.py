@@ -24,7 +24,8 @@ Code for building the Tic-Tac-Toe UI.
 COLOR: dict[str, str] = {'X': "color: rgb(255, 49, 49)",
                          'O': "color: rgb(0, 131, 255)",
                          'T': "color: rgb(255, 255, 255)",
-                         'focus': "background-color: rgb(186, 255, 201)"}
+                         'focus': "background-color: rgb(186, 255, 201)",
+                         'prev': "background-color: rgb(255, 255, 137)"}
 
 def _get_winner(tictactoe_board: list[list[Literal['X', 'O', '']]]):
     """
@@ -82,6 +83,7 @@ class TicTacToe(QWidget):
         for hbox in self.hboxes:
             self.vbox.addLayout(hbox)
         self.setLayout(self.vbox)
+        self.focused = False
     
 
     def _init_buttons(self, format_board_func: Callable[[tuple[int, int], 'TicTacToe'], None]) -> None:
@@ -90,7 +92,7 @@ class TicTacToe(QWidget):
             for j in range(3):
                 self.buttons[i].append(QPushButton(parent=self))
                 self.buttons[i][j].setFixedSize(50, 50)
-                
+
                 self.hboxes[i].addWidget(self.buttons[i][j])
         self.buttons[0][0].pressed.connect(lambda: format_board_func((0, 0), self))
         self.buttons[0][1].pressed.connect(lambda: format_board_func((0, 1), self))
@@ -119,7 +121,7 @@ class TicTacToe(QWidget):
         for row in self.buttons:
             for button in row:
                 button.setText('')
-                button.setEnabled(True)
+                button.blockSignals(False)
 
     def get_winner(self) -> Literal['X', 'O', 'T', '']:
         """
@@ -145,8 +147,16 @@ class TicTacToe(QWidget):
         """Hide the overlay label, making this board playable"""
         self.overlay_label.setHidden(True)
 
+    def highlight_butt(self, position: tuple[int, int], highlight: bool = True) -> None:
+        button = self.buttons[position[0]][position[1]]
+        char = button.text()
+        style = COLOR['prev'] if highlight else (COLOR['focus'] if self.focused else '')
+        style += '; ' + COLOR[char if char else 'T']
+        button.setStyleSheet(style)
+
     def focus_board(self, focus: bool = True) -> None:
         """Apply the focus effect on this board if `focus=True`"""
+        self.focused = focus
         for row in self.buttons:
             for button in row:
                 char = button.text()
