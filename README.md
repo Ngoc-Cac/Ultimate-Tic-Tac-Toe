@@ -63,14 +63,14 @@ Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. How
 
 ## :computer:How do I run the program?
 ### Running as an executable:
-To run the program from an executable, download the zip file and unzip them. Depending on your system, refer to:
-1. [`dist/UTTT_windows_32bit.zip`](./dist/UTTT_windows_32bit.zip)
+To run the program from an executable, download the zip file and unzip them.\\
+Currently, the game's design is only supported on Windows, hence there is only an executable for Windows. To download, refer to: [`dist/UTTT_windows_32bit.zip`](./dist/UTTT_windows_32bit.zip)
 ### Running from Python script:
+For systems on MacOs and Linux, the game can still be run from the source code. However, the GUI design will not look very nice.\\
 To run from the main Python script `src/ultimate_tictactoe.py`. Follow these steps:
-1. Before running, be sure to have [Python](https://www.python.org/) installed, Python 3.12 is highly recommended, 3.10 is minimal.
+1. Before running, be sure to have [Python](https://www.python.org/) installed, Python 3.12+ is highly recommended, 3.10 is minimal.
 2. Afterwards, install libraries in `/requirements.txt` using `pip install -r path/to/requirements.txt` or any other means. For more infomation, visit [pip install](https://pip.pypa.io/en/stable/cli/pip_install/#description).
-2. If everything has been setup correctly, you can now run `src/ultimate_tictactoe.py` as is.
-
+2. If everything has been setup correctly, you can now run `src/ultimate_tictactoe.py` as provided.
 
 ---
 ---
