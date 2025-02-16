@@ -25,7 +25,7 @@ COLOR: dict[str, str] = {'X': "color: rgb(255, 49, 49)",
                          'O': "color: rgb(0, 131, 255)",
                          'T': "color: rgb(255, 255, 255)",
                          'focus': "background-color: rgb(186, 255, 201)",
-                         'prev': "background-color: rgb(255, 255, 137)"}
+                         'prev': "background-color: rgba(255, 255, 137, 220)"}
 
 def _get_winner(tictactoe_board: list[list[Literal['X', 'O', '']]]):
     """
@@ -116,11 +116,13 @@ class TicTacToe(QWidget):
 
     def reset(self) -> None:
         """Reset the board to the default state"""
+        if self.focused: self.focused = False
         self.overlay_label.setText('')
         self.overlay_label.setHidden(True)
         for row in self.buttons:
             for button in row:
                 button.setText('')
+                button.setStyleSheet('')
                 button.blockSignals(False)
 
     def get_winner(self) -> Literal['X', 'O', 'T', '']:

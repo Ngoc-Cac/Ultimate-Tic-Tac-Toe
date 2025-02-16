@@ -65,12 +65,7 @@ def undo_decor(undo_func):
 def board_cleanup():
     current_state.game.overlay_label.setHidden(True)
 
-    if current_state.current_board:
-        current_state.game\
-                     .boards[current_state.current_board[0]]\
-                            [current_state.current_board[1]]\
-                     .focus_board(False)
-        current_state.current_board = None
+    current_state.current_board = None
 
     for i, row in enumerate(current_state.game.boards):
         for j, board in enumerate(row):
