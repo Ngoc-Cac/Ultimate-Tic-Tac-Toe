@@ -28,7 +28,7 @@ Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. How
     </div>
 </details>
 
-2. If one player is able to make three in a row on a small board, a both player has filled the small board (a tie), the board is then no longer playable. When a player makes a move that send the next player to the aforementioned board, the next player can instead make a move in any other board.
+2. If one player is able to make three in a row on a small board or both player has filled the small board (a tie), that board is no longer playable. Whenever a player is sent to the aforementioned board, they can instead make a move in any other board.
 <details>
     <summary>
         <b>Illutstrative Example</b>
@@ -43,13 +43,13 @@ Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. How
     </div>
 </details>
 
-3. The players continue playing following the above rules until one has won three small boards in a row or they have filled out the entire grid.
+3. The players continue make moves in turn until one has won three small boards in a row or they have filled out the entire grid.
 <details>
     <summary>
         <b>Illutstrative Example</b>
     </summary>
     <div align="center">
-        <img src="./resource/tutorial/tutorial-3.png" width="600" height="250">
+        <img src="./resource/tutorial/tutorial-3.png" width="250" height="250">
         <p>
             <b>
                 X has won three boards in a row (three boards in the middle column). X now wins the game
@@ -61,21 +61,21 @@ Just like the normal Tic-Tac-Toe game, you win if you have a three in a row. How
 ---
 <a name="program-run"></a>
 
-## :computer:How do I run the program?
+## :computer:How do I run the application?
 ### Running as an executable:
-To run the program from an executable, download the zip file and unzip them.\\
+To run the application from an executable, download the zip file and unzip them.\
 Currently, the game's design is only supported on Windows, hence there is only an executable for Windows. To download, refer to: [`dist/UTTT_windows_32bit.zip`](./dist/UTTT_windows_32bit.zip)
 ### Running from Python script:
-For systems on MacOs and Linux, the game can still be run from the source code. However, the GUI design will not look very nice.\\
-To run from the main Python script `src/ultimate_tictactoe.py`. Follow these steps:
+For systems on MacOs and Linux, the game can still be run from the Python scripts. However, the GUI design will not look nice.\
+To run the application straight from the scripts. Follow these steps:
 1. Before running, be sure to have [Python](https://www.python.org/) installed, Python 3.12+ is highly recommended, 3.10 is minimal.
 2. Afterwards, install libraries in `/requirements.txt` using `pip install -r path/to/requirements.txt` or any other means. For more infomation, visit [pip install](https://pip.pypa.io/en/stable/cli/pip_install/#description).
-2. If everything has been setup correctly, you can now run `src/ultimate_tictactoe.py` as provided.
+2. If everything has been setup correctly, you can now run [`src/ultimate_tictactoe.py`](./src/ultimate_tictactoe.py) as provided.
 
 ---
 ---
 <a name="credits"></a>
 
 ## :copyright:Credits
-Special thanks to [Gabriel-Duong](https://github.com/Gabriel-Duong) for creating the loading gif as well as testing out the application!
-The cogwheel and hamburger icons are taken from [FlatIcon](https://www.flaticon.com/)
+- Special thanks to [Gabriel-Duong](https://github.com/Gabriel-Duong) for creating the loading gif as well as testing out the application!
+- The cogwheel and hamburger icons are taken from [FlatIcon](https://www.flaticon.com/)
