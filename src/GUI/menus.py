@@ -1,0 +1,158 @@
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
+    QComboBox,
+    QFrame,
+    QHBoxLayout,
+    QPushButton,
+    QLabel,
+    QVBoxLayout
+)
+"""
+Code for building the UI of Menus inside of Home tab.
+"""
+
+
+class NewGameMenu(QFrame):
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+        # new game menu
+        vbox = QVBoxLayout()
+
+        ## game type choosing zone
+        gametype_hbox = self._init_gametype_zone()
+        
+        ## mode choosing zone
+        mode_hbox = self._init_gamemode_zone()
+        algo_hbox = self._init_algo_zone()
+
+        ## play button zone
+        self.play_button = QPushButton('Play!')
+        self.play_button.setFixedSize(100, 50)
+
+        vbox.addLayout(gametype_hbox)
+        vbox.addLayout(mode_hbox)
+        vbox.addLayout(algo_hbox)
+        vbox.addWidget(self.play_button, alignment=Qt.AlignmentFlag.AlignHCenter)
+        vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setLayout(vbox)
+
+    def _init_gametype_zone(self):
+        self.gametype_box = QComboBox()
+        self.gametype_box.addItems(['Normal', 'Ultimate'])
+        self.gametype_box.setCurrentIndex(1)
+        self.gametype_box.setFixedSize(115, 50)
+
+        decorative_label = QLabel('Game Type:')
+        decorative_label.setFixedSize(110, 30)
+        decorative_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+
+        gametype_hbox = QHBoxLayout()
+        gametype_hbox.addWidget(decorative_label)
+        gametype_hbox.addWidget(self.gametype_box)
+        gametype_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        return gametype_hbox
+    
+    def _init_gamemode_zone(self):
+        self.mode_box = QComboBox()
+        self.mode_box.addItems(['Human', 'Bot'])
+        self.mode_box.setFixedSize(115, 50)
+
+        
+        self.choose_turn_butt = QPushButton('Bot goes first!')
+        self.choose_turn_butt.setHidden(True)
+        self.choose_turn_butt.setFixedSize(200, 50)
+
+
+        decorative_label = QLabel('Mode:')
+        decorative_label.setFixedSize(110, 30)
+        decorative_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+
+        mode_hbox = QHBoxLayout()
+        mode_hbox.addWidget(decorative_label)
+        mode_hbox.addWidget(self.mode_box)
+        mode_hbox.addWidget(self.choose_turn_butt)
+        mode_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        return mode_hbox
+    
+    def _init_algo_zone(self):
+        self.algo_box = QComboBox()
+        self.algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
+        self.algo_box.setCurrentIndex(1)
+        self.algo_box.setFixedSize(260, 50)
+        self.algo_box.setHidden(True)
+
+        self.algo_label = QLabel('Algorithm:')
+        self.algo_label.setFixedSize(110, 30)
+        self.algo_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+        self.algo_label.setHidden(True)
+
+        algo_hbox = QHBoxLayout()
+        algo_hbox.addWidget(self.algo_label)
+        algo_hbox.addWidget(self.algo_box)
+        algo_hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        return algo_hbox
+    
+class InGameMenu(QFrame):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+
+        self.continue_butt = QPushButton('Continue Game')
+        self.continue_butt.setFixedSize(180, 50)
+
+        self.new_game_butt = QPushButton('New Game')
+        self.new_game_butt.setFixedSize(180, 50)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.continue_butt)
+        vbox.addWidget(self.new_game_butt)
+        vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setLayout(vbox)
+
+class SettingsMenu(QFrame):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+
+        self.continue_butt = QPushButton('Continue Game')
+        self.continue_butt.setFixedSize(180, 50)
+
+        theme_zone = self._init_theme_choice()
+        algo_zone = self._init_algo_choice()
+        
+        vbox = QVBoxLayout()
+        vbox.addLayout(theme_zone)
+        vbox.addLayout(algo_zone)
+        vbox.addWidget(self.continue_butt, alignment=Qt.AlignmentFlag.AlignHCenter)
+        vbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setLayout(vbox)
+
+    def _init_theme_choice(self):
+        self.theme_butt = QPushButton('Dark')
+        self.theme_butt.setFixedSize(80, 50)
+
+        theme_label = QLabel('Theme:')
+        theme_label.setFixedSize(110, 30)
+        theme_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(theme_label)
+        hbox.addWidget(self.theme_butt)
+        hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        return hbox
+
+    def _init_algo_choice(self):
+        self.algo_box = QComboBox()
+        self.algo_box.addItems(['Minimax', 'Monte Carlo Tree Search'])
+        self.algo_box.setCurrentIndex(1)
+        self.algo_box.setFixedSize(260, 50)
+
+        info_label = QLabel('Algorithm:')
+        info_label.setFixedSize(110, 30)
+        info_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(info_label)
+        hbox.addWidget(self.algo_box)
+        hbox.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        return hbox
